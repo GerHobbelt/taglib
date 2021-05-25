@@ -54,6 +54,10 @@
 #include "s3mfile.h"
 #include "itfile.h"
 #include "xmfile.h"
+//JBH ==========================================================================<
+#include "dsffile.h"
+#include "dsdifffile.h"
+//JBH ==========================================================================>
 
 using namespace TagLib;
 
@@ -144,6 +148,12 @@ namespace
       return new IT::File(stream, readAudioProperties, audioPropertiesStyle);
     if(ext == "XM")
       return new XM::File(stream, readAudioProperties, audioPropertiesStyle);
+//JBH ==========================================================================<
+    if(ext == "DFF" || ext == "DSDIFF")
+      return new DSDIFF::File(stream, readAudioProperties, audioPropertiesStyle);
+    if(ext == "DSF")
+      return new DSF::File(stream, readAudioProperties, audioPropertiesStyle);
+//JBH ==========================================================================>
 
     return 0;
   }
@@ -183,6 +193,12 @@ namespace
       file = new RIFF::WAV::File(stream, readAudioProperties, audioPropertiesStyle);
     else if(APE::File::isSupported(stream))
       file = new APE::File(stream, readAudioProperties, audioPropertiesStyle);
+//JBH ==========================================================================<
+    else if(DSDIFF::File::isSupported(stream))
+      file = new DSDIFF::File(stream, readAudioProperties, audioPropertiesStyle);
+    else if(DSF::File::isSupported(stream))
+      file = new DSF::File(stream, readAudioProperties, audioPropertiesStyle);
+//JBH ==========================================================================>
 
     // isSupported() only does a quick check, so double check the file here.
 
@@ -264,6 +280,12 @@ namespace
       return new IT::File(fileName, readAudioProperties, audioPropertiesStyle);
     if(ext == "XM")
       return new XM::File(fileName, readAudioProperties, audioPropertiesStyle);
+//JBH ==========================================================================<
+    if(ext == "DFF" || ext == "DSDIFF")
+      return new DSDIFF::File(fileName, readAudioProperties, audioPropertiesStyle);
+    if(ext == "DSF")
+      return new DSF::File(fileName, readAudioProperties, audioPropertiesStyle);
+//JBH ==========================================================================>
 
     return 0;
   }
@@ -399,6 +421,11 @@ StringList FileRef::defaultFileExtensions()
   l.append("s3m");
   l.append("it");
   l.append("xm");
+//JBH ==========================================================================<
+  l.append("dsf");
+  l.append("dff");
+  l.append("dsdiff"); // alias for "dff"
+//JBH ==========================================================================>
 
   return l;
 }

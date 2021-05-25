@@ -90,14 +90,19 @@ namespace TagLib {
        * \deprecated
        */
       // BIC: remove
+//JBH ==========================================================================<
+#ifdef JBH_USE_EMBEDDED_UNICODE_ENCODER
+      Frame *createFrame(const ByteVector &origData, Header *tagHeader, std::string orgCharSet="UNKNOWN", float orgCharSetConfidence=0.0) const;
+#else
       Frame *createFrame(const ByteVector &data, Header *tagHeader) const;
+#endif
+//JBH ==========================================================================>
       /*!
        * Create a frame based on \a data.  \a tagHeader should be a valid
        * ID3v2::Header instance.
        */
       // BIC: make virtual
       Frame *createFrame(const ByteVector &data, const Header *tagHeader) const;
-
       /*!
        * After a tag has been read, this tries to rebuild some of them
        * information, most notably the recording date, from frames that

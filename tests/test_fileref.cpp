@@ -42,6 +42,10 @@
 #include <wavpackfile.h>
 #include <opusfile.h>
 #include <xmfile.h>
+//JBH ==========================================================================<
+#include <dsffile.h>
+#include <dsdifffile.h>
+//JBH ==========================================================================>
 #include <tfilestream.h>
 #include <tbytevectorstream.h>
 #include <cppunit/extensions/HelperMacros.h>
@@ -84,6 +88,10 @@ class TestFileRef : public CppUnit::TestFixture
   CPPUNIT_TEST(testAIFF_2);
   CPPUNIT_TEST(testWavPack);
   CPPUNIT_TEST(testOpus);
+//JBH ==========================================================================<
+  CPPUNIT_TEST(testDSF);
+  CPPUNIT_TEST(testDSDIFF);
+//JBH ==========================================================================>
   CPPUNIT_TEST(testUnsupported);
   CPPUNIT_TEST(testCreate);
   CPPUNIT_TEST(testAudioProperties);
@@ -305,6 +313,18 @@ public:
   {
     fileRefSave<RIFF::AIFF::File>("alaw", ".aifc");
   }
+  
+//JBH ==========================================================================<
+  void testDSF()
+  {
+    fileRefSave<DSF::File>("empty10ms",".dsf");
+  }
+  
+  void testDSDIFF()
+  {
+    fileRefSave<DSDIFF::File>("empty10ms",".dff");
+  }
+//JBH ==========================================================================>
 
   void testWavPack()
   {
