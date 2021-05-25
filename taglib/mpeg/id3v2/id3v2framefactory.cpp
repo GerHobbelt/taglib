@@ -145,11 +145,20 @@ Frame *FrameFactory::createFrame(const ByteVector &data, unsigned int version) c
 Frame *FrameFactory::createFrame(const ByteVector &origData, Header *tagHeader, std::string orgCharSet, float orgCharSetConfidence) const
 #else
 Frame *FrameFactory::createFrame(const ByteVector &origData, Header *tagHeader) const
-{
-    return createFrame(origData, const_cast<const Header *>(tagHeader));
-}
 #endif
+{
+#ifdef JBH_USE_EMBEDDED_UNICODE_ENCODER
+    return createFrame(origData, const_cast<const Header *>(tagHeader), orgCharSet, orgCharSetConfidence);
+#else
+    return createFrame(origData, const_cast<const Header *>(tagHeader));
+#endif
+}
+
+#ifdef JBH_USE_EMBEDDED_UNICODE_ENCODER
+Frame *FrameFactory::createFrame(const ByteVector &origData, const Header *tagHeader, std::string orgCharSet, float orgCharSetConfidence) const
+#else
 Frame *FrameFactory::createFrame(const ByteVector &origData, const Header *tagHeader) const
+#endif
 {
   /*
    *JBH: Artist: "벤", Title: "갈색 추억"   EUC-KR encoded.
