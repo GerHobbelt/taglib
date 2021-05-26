@@ -47,3 +47,13 @@ CMakeFiles/
 taglib.h.stamp
 taglib.xcodeproj
 CMakeScripts
+### JBH commons
+j_*
+a
+00build/
+00build-ams/
+00build-general/
+00build-*/
+cmake-build-debug
+cmake-build-release
+###
