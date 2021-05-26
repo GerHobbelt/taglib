@@ -504,7 +504,99 @@ void FLAC::File::scan()
 
   nextBlockOffset += 4;
   d->flacStart = nextBlockOffset;
+#if 1
+  while (true)
+  {
 
+    seek(nextBlockOffset);
+    const ByteVector header = readBlock(4);
+
+    // Header format (from spec):
+    // <1> Last-metadata-block flag
+    // <7> BLOCK_TYPE
+    //    0 : STREAMINFO
+    //    1 : PADDING
+    //    ..
+    //    4 : VORBIS_COMMENT
+    //    ..
+    //    6 : PICTURE
+    //    ..
+    // <24> Length of metadata to follow
+
+    const char blockType = header[0] & ~LastBlockFlag;
+    const bool isLastBlock = (header[0] & LastBlockFlag) != 0;
+    const unsigned int blockLength = header.toUInt(1U, 3U);
+
+    // First block should be the stream_info metadata
+
+    if (d->blocks.isEmpty() && blockType != MetadataBlock::StreamInfo)
+    {
+      debug("FLAC::File::scan() -- First block should be the stream_info metadata");
+      setValid(false);
+      return;
+    }
+
+    if (blockLength == 0 && blockType != MetadataBlock::Padding && blockType != MetadataBlock::SeekTable)
+    {
+      debug("FLAC::File::scan() -- Zero-sized metadata block found");
+      setValid(false);
+      return;
+    }
+
+    const ByteVector data = readBlock(blockLength);
+    if (data.size() != blockLength)
+    {
+      debug("FLAC::File::scan() -- Failed to read a metadata block");
+      setValid(false);
+      return;
+    }
+
+    MetadataBlock *block = 0;
+
+    // Found the vorbis-comment
+    if (blockType == MetadataBlock::VorbisComment)
+    {
+      if (d->xiphCommentData.isEmpty())
+      {
+        d->xiphCommentData = data;
+        block = new UnknownMetadataBlock(MetadataBlock::VorbisComment, data);
+      }
+      else
+      {
+        debug("FLAC::File::scan() -- multiple Vorbis Comment blocks found, discarding");
+      }
+    }
+    else if (blockType == MetadataBlock::Picture)
+    {
+      FLAC::Picture *picture = new FLAC::Picture();
+      if (picture->parse(data))
+      {
+        block = picture;
+      }
+      else
+      {
+        debug("FLAC::File::scan() -- invalid picture found, discarding");
+        delete picture;
+      }
+    }
+    else if (blockType == MetadataBlock::Padding)
+    {
+      // Skip all padding blocks.
+    }
+    else
+    {
+      block = new UnknownMetadataBlock(blockType, data);
+    }
+
+    if (block)
+      d->blocks.append(block);
+
+    nextBlockOffset += blockLength + 4;
+
+    if (isLastBlock)
+      break;
+  }
+#else
   while(true) {
 
     seek(nextBlockOffset);
@@ -752,6 +844,7 @@ void FLAC::File::scan()
     if(isLastBlock)
       break;
   }
+#endif
 
   // End of metadata, now comes the datastream
 
