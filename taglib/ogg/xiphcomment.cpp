@@ -121,6 +121,12 @@ String Ogg::XiphComment::genre() const
   return d->fieldListMap["GENRE"].toString();
 }
 
+String Ogg::XiphComment::key() const
+{
+  // TODO: proper key information 
+  return "";
+}
+
 unsigned int Ogg::XiphComment::year() const
 {
   if(!d->fieldListMap["DATE"].isEmpty())
@@ -136,6 +142,12 @@ unsigned int Ogg::XiphComment::track() const
     return d->fieldListMap["TRACKNUMBER"].front().toInt();
   if(!d->fieldListMap["TRACKNUM"].isEmpty())
     return d->fieldListMap["TRACKNUM"].front().toInt();
+  return 0;
+}
+
+unsigned int Ogg::XiphComment::bpm() const 
+{ 
+  // TODO: proper bpm information 
   return 0;
 }
 

@@ -79,6 +79,11 @@ namespace TagLib {
       virtual String genre() const;
 
       /*!
+       * Not supported by module files.  Therefore always returns String::null.
+       */
+      virtual String key() const;
+
+      /*!
        * Not supported by module files.  Therefore always returns 0.
        */
       virtual unsigned int year() const;
@@ -87,6 +92,11 @@ namespace TagLib {
        * Not supported by module files.  Therefore always returns 0.
        */
       virtual unsigned int track() const;
+
+      /*!
+       * Not supported by module files. Therefore always return 0.
+       */
+      virtual unsigned int bpm() const; 
 
       /*!
        * Returns the name of the tracker used to create/edit the module file.

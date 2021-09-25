@@ -113,6 +113,13 @@ String RIFF::Info::Tag::genre() const
   return fieldText("IGNR");
 }
 
+String RIFF::Info::Tag::key() const
+{
+  // TODO: proper key information
+  // RIFF doesn't seem to support KEY information. 
+  return "";
+}
+
 unsigned int RIFF::Info::Tag::year() const
 {
   return fieldText("ICRD").substr(0, 4).toInt();
@@ -121,6 +128,13 @@ unsigned int RIFF::Info::Tag::year() const
 unsigned int RIFF::Info::Tag::track() const
 {
   return fieldText("IPRT").toInt();
+}
+
+unsigned int RIFF::Info::Tag::bpm() const 
+{
+  // TODO: proper bpm information
+  // RIFF doesn't seem to support BPM information. 
+  return 0;
 }
 
 void RIFF::Info::Tag::setTitle(const String &s)

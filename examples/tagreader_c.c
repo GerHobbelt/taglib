@@ -59,6 +59,8 @@ int main(int argc, char *argv[])
       printf("year    - \"%i\"\n", taglib_tag_year(tag));
       printf("comment - \"%s\"\n", taglib_tag_comment(tag));
       printf("track   - \"%i\"\n", taglib_tag_track(tag));
+      printf("bpm     - \"%i\"\n", taglib_tag_bpm(tag));
+      printf("key     - \"%s\"\n", taglib_tag_key(tag));
       printf("genre   - \"%s\"\n", taglib_tag_genre(tag));
     }
 

@@ -192,6 +192,14 @@ TAGLIB_C_EXPORT char *taglib_tag_comment(const TagLib_Tag *tag);
 TAGLIB_C_EXPORT char *taglib_tag_genre(const TagLib_Tag *tag);
 
 /*!
+ * Returns a string with this tag's key.
+ *
+ * \note By default this string should be UTF8 encoded and its memory should be
+ * freed using taglib_tag_free_strings().
+ */
+TAGLIB_C_EXPORT char *taglib_tag_key(const TagLib_Tag *tag);
+
+/*!
  * Returns the tag's year or 0 if year is not set.
  */
 TAGLIB_C_EXPORT unsigned int taglib_tag_year(const TagLib_Tag *tag);
@@ -200,6 +208,12 @@ TAGLIB_C_EXPORT unsigned int taglib_tag_year(const TagLib_Tag *tag);
  * Returns the tag's track number or 0 if track number is not set.
  */
 TAGLIB_C_EXPORT unsigned int taglib_tag_track(const TagLib_Tag *tag);
+
+/*!
+ * Returns the beats-per-minute (bpm) of the track; if there is no bpm 
+ * set, or bpm tag in the metadata, this will return 0.
+ */ 
+TAGLIB_C_EXPORT unsigned int taglib_tag_bpm(const TagLib_Tag *tag); 
 
 /*!
  * Sets the tag's title.

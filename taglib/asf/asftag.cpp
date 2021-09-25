@@ -103,10 +103,24 @@ unsigned int ASF::Tag::track() const
   return 0;
 }
 
+unsigned int ASF::Tag::bpm() const 
+{ 
+  if(d->attributeListMap.contains("WM/BeatsPerMinute"))
+    return d->attributeListMap["WM/BeatsPerMinute"][0].toUInt();
+  return 0;
+}
+
 String ASF::Tag::genre() const
 {
   if(d->attributeListMap.contains("WM/Genre"))
     return d->attributeListMap["WM/Genre"][0].toString();
+  return String();
+}
+
+String ASF::Tag::key() const
+{
+  if(d->attributeListMap.contains("WM/InitialKey"))
+    return d->attributeListMap["WM/InitialKey"][0].toString();
   return String();
 }
 

@@ -735,6 +735,14 @@ MP4::Tag::genre() const
   return String();
 }
 
+String
+MP4::Tag::key() const
+{
+  if(d->items.contains("\251key"))
+    return d->items["\251key"].toStringList().toString(", ");
+  return String();
+}
+
 unsigned int
 MP4::Tag::year() const
 {
@@ -748,6 +756,14 @@ MP4::Tag::track() const
 {
   if(d->items.contains("trkn"))
     return d->items["trkn"].toIntPair().first;
+  return 0;
+}
+
+unsigned int 
+MP4::Tag::bpm() const
+{
+  if(d->items.contains("tmpo"))
+    return d->items["tmpo"].toIntPair().first;
   return 0;
 }
 

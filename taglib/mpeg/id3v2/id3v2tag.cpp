@@ -153,6 +153,13 @@ String ID3v2::Tag::album() const
   return String();
 }
 
+String ID3v2::Tag::key() const
+{
+  if(!d->frameListMap["TKEY"].isEmpty())
+    return d->frameListMap["TKEY"].front()->toString();
+  return String();
+}
+
 String ID3v2::Tag::comment() const
 {
   const FrameList &comments = d->frameListMap["COMM"];
@@ -225,6 +232,12 @@ unsigned int ID3v2::Tag::track() const
 {
   if(!d->frameListMap["TRCK"].isEmpty())
     return d->frameListMap["TRCK"].front()->toString().toInt();
+  return 0;
+}
+
+unsigned int ID3v2::Tag::bpm() const { 
+  if(!d->frameListMap["TBPM"].isEmpty())
+    return d->frameListMap["TBPM"].front()->toString().toInt();
   return 0;
 }
 

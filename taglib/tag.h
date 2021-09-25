@@ -109,6 +109,12 @@ namespace TagLib {
     virtual String genre() const = 0;
 
     /*!
+     * Returns the musical key; if no key is present in the tag String::null
+     * will be returned.
+     */
+    virtual String key() const = 0;
+
+    /*!
      * Returns the year; if there is no year set, this will return 0.
      */
     virtual unsigned int year() const = 0;
@@ -118,6 +124,12 @@ namespace TagLib {
      * return 0.
      */
     virtual unsigned int track() const = 0;
+
+    /*!
+     * Returns the beats-per-minute (bpm) of the track; if there is no bpm 
+     * set, or bpm tag in the metadata, this will return 0.
+     */ 
+    virtual unsigned int bpm() const = 0; 
 
     /*!
      * Sets the title to \a s.  If \a s is String::null then this value will be
