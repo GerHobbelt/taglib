@@ -199,6 +199,15 @@ char *taglib_tag_genre(const TagLib_Tag *tag)
   return s;
 }
 
+char *taglib_tag_key(const TagLib_Tag *tag)
+{
+  const Tag *t = reinterpret_cast<const Tag *>(tag);
+  char *s = stringToCharArray(t->key());
+  if(stringManagementEnabled)
+    strings.append(s);
+  return s;
+}
+
 unsigned int taglib_tag_year(const TagLib_Tag *tag)
 {
   const Tag *t = reinterpret_cast<const Tag *>(tag);
@@ -209,6 +218,12 @@ unsigned int taglib_tag_track(const TagLib_Tag *tag)
 {
   const Tag *t = reinterpret_cast<const Tag *>(tag);
   return t->track();
+}
+
+unsigned int taglib_tag_bpm(const TagLib_Tag *tag)
+{
+  const Tag *t = reinterpret_cast<const Tag *>(tag);
+  return t->bpm();
 }
 
 void taglib_tag_set_title(TagLib_Tag *tag, const char *title)

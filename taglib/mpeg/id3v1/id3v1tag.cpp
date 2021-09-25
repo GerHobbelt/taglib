@@ -149,6 +149,12 @@ String ID3v1::Tag::genre() const
   return ID3v1::genre(d->genre);
 }
 
+String ID3v1::Tag::key() const
+{
+  // TODO: proper key information 
+  return "";
+}
+
 unsigned int ID3v1::Tag::year() const
 {
   return d->year.toInt();
@@ -157,6 +163,11 @@ unsigned int ID3v1::Tag::year() const
 unsigned int ID3v1::Tag::track() const
 {
   return d->track;
+}
+
+unsigned int ID3v1::Tag::bpm() const { 
+  // TODO: proper bpm information 
+  return 0;
 }
 
 void ID3v1::Tag::setTitle(const String &s)

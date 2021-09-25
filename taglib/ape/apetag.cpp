@@ -149,6 +149,12 @@ String APE::Tag::genre() const
   return d->itemListMap["GENRE"].values().toString();
 }
 
+String APE::Tag::key() const
+{
+    // APE tags don't implement KEY information
+    return "";
+}
+
 unsigned int APE::Tag::year() const
 {
   if(d->itemListMap["YEAR"].isEmpty())
@@ -161,6 +167,12 @@ unsigned int APE::Tag::track() const
   if(d->itemListMap["TRACK"].isEmpty())
     return 0;
   return d->itemListMap["TRACK"].toString().toInt();
+}
+
+unsigned int APE::Tag::bpm() const 
+{ 
+  // APE tags don't implement BPM information
+  return 0;
 }
 
 void APE::Tag::setTitle(const String &s)

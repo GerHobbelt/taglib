@@ -78,12 +78,22 @@ String Mod::Tag::genre() const
   return String();
 }
 
+String Mod::Tag::key() const
+{
+  return String();
+}
+
 unsigned int Mod::Tag::year() const
 {
   return 0;
 }
 
 unsigned int Mod::Tag::track() const
+{
+  return 0;
+}
+
+unsigned int Mod::Tag::bpm() const
 {
   return 0;
 }

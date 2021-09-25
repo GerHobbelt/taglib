@@ -189,6 +189,11 @@ String TagUnion::genre() const
   stringUnion(genre);
 }
 
+String TagUnion::key() const
+{
+  stringUnion(key);
+}
+
 unsigned int TagUnion::year() const
 {
   numberUnion(year);
@@ -197,6 +202,11 @@ unsigned int TagUnion::year() const
 unsigned int TagUnion::track() const
 {
   numberUnion(track);
+}
+
+unsigned int TagUnion::bpm() const
+{
+  numberUnion(bpm);
 }
 
 void TagUnion::setTitle(const String &s)
