@@ -83,6 +83,11 @@ String Mod::Tag::key() const
   return String();
 }
 
+String Mod::Tag::group() const
+{
+  return String();
+}
+
 unsigned int Mod::Tag::year() const
 {
   return 0;

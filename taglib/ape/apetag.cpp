@@ -155,6 +155,12 @@ String APE::Tag::key() const
     return "";
 }
 
+String APE::Tag::group() const
+{
+    // APE tags don't implement GROUP information
+    return "";
+}
+
 unsigned int APE::Tag::year() const
 {
   if(d->itemListMap["YEAR"].isEmpty())

@@ -764,6 +764,14 @@ MP4::Tag::key() const
   return String();
 }
 
+String
+MP4::Tag::group() const
+{
+  if(d->items.contains("\251group"))
+    return d->items["\251group"].toStringList().toString(", ");
+  return String();
+}
+
 unsigned int
 MP4::Tag::year() const
 {

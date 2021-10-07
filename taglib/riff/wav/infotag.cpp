@@ -118,6 +118,13 @@ String RIFF::Info::Tag::key() const
   return "";
 }
 
+String RIFF::Info::Tag::group() const
+{
+  // TODO: proper key information
+  // RIFF doesn't seem to support KEY information. 
+  return "";
+}
+
 unsigned int RIFF::Info::Tag::year() const
 {
   return fieldText("ICRD").substr(0, 4).toInt();

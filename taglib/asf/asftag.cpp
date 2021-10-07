@@ -122,6 +122,13 @@ String ASF::Tag::key() const
   return String();
 }
 
+String ASF::Tag::group() const
+{
+  if(d->attributeListMap.contains("WM/Grouping"))
+    return d->attributeListMap["WM/Grouping"][0].toString();
+  return String();
+}
+
 void ASF::Tag::setTitle(const String &value)
 {
   d->title = value;

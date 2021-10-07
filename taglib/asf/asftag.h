@@ -83,6 +83,12 @@ namespace TagLib {
       virtual String key() const;
 
       /*!
+       * Returns the musical key; if no key is present in the tag String::null
+       * will be returned.
+       */
+      virtual String group() const;
+
+      /*!
        * Returns the rating.
        */
       virtual String rating() const;

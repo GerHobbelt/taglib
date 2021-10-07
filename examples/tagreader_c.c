@@ -61,6 +61,7 @@ int main(int argc, char *argv[])
       printf("track   - \"%i\"\n", taglib_tag_track(tag));
       printf("bpm     - \"%i\"\n", taglib_tag_bpm(tag));
       printf("key     - \"%s\"\n", taglib_tag_key(tag));
+      printf("group   - \"%s\"\n", taglib_tag_group(tag));
       printf("genre   - \"%s\"\n", taglib_tag_genre(tag));
     }
 

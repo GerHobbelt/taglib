@@ -208,6 +208,15 @@ char *taglib_tag_key(const TagLib_Tag *tag)
   return s;
 }
 
+char *taglib_tag_group(const TagLib_Tag *tag)
+{
+  const Tag *t = reinterpret_cast<const Tag *>(tag);
+  char *s = stringToCharArray(t->group());
+  if(stringManagementEnabled)
+    strings.append(s);
+  return s;
+}
+
 unsigned int taglib_tag_year(const TagLib_Tag *tag)
 {
   const Tag *t = reinterpret_cast<const Tag *>(tag);

@@ -155,6 +155,12 @@ String ID3v1::Tag::key() const
   return "";
 }
 
+String ID3v1::Tag::group() const
+{
+  // TODO: proper key information 
+  return "";
+}
+
 unsigned int ID3v1::Tag::year() const
 {
   return d->year.toInt();

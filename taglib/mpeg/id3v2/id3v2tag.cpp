@@ -168,6 +168,13 @@ String ID3v2::Tag::key() const
   return String();
 }
 
+String ID3v2::Tag::group() const
+{
+  if(!d->frameListMap["TIT1"].isEmpty())
+    return d->frameListMap["TIT1"].front()->toString();
+  return String();
+}
+
 String ID3v2::Tag::comment() const
 {
   const FrameList &comments = d->frameListMap["COMM"];

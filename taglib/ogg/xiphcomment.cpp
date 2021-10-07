@@ -125,6 +125,12 @@ String Ogg::XiphComment::key() const
   return "";
 }
 
+String Ogg::XiphComment::group() const
+{
+  // TODO: proper key information 
+  return "";
+}
+
 unsigned int Ogg::XiphComment::year() const
 {
   if(!d->fieldListMap["DATE"].isEmpty())

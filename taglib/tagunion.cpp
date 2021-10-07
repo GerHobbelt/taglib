@@ -194,6 +194,11 @@ String TagUnion::key() const
   stringUnion(key);
 }
 
+String TagUnion::group() const
+{
+  stringUnion(key);
+}
+
 unsigned int TagUnion::year() const
 {
   numberUnion(year);

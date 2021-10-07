@@ -59,6 +59,7 @@ namespace TagLib {
         virtual String comment() const;
         virtual String genre() const;
         virtual String key() const;
+        virtual String group() const;
         virtual unsigned int year() const;
         virtual unsigned int track() const;
         virtual unsigned int bpm() const;

@@ -84,6 +84,11 @@ namespace TagLib {
       virtual String key() const;
 
       /*!
+       * Not supported by module files.  Therefore always returns String::null.
+       */
+      virtual String group() const;
+
+      /*!
        * Not supported by module files.  Therefore always returns 0.
        */
       virtual unsigned int year() const;
