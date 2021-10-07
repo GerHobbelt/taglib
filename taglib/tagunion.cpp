@@ -196,7 +196,7 @@ String TagUnion::key() const
 
 String TagUnion::group() const
 {
-  stringUnion(key);
+  stringUnion(group);
 }
 
 unsigned int TagUnion::year() const
