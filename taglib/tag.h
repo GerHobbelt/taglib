@@ -118,7 +118,7 @@ namespace TagLib {
      * Returns the grouping tag; if no grouping is present in the tag String::null
      * will be returned.
      */
-    virtual String group() const = 0;
+    virtual String grouping() const = 0;
 
     /*!
      * Returns the year; if there is no year set, this will return 0.

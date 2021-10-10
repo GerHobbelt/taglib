@@ -208,10 +208,10 @@ char *taglib_tag_key(const TagLib_Tag *tag)
   return s;
 }
 
-char *taglib_tag_group(const TagLib_Tag *tag)
+char *taglib_tag_grouping(const TagLib_Tag *tag)
 {
   const Tag *t = reinterpret_cast<const Tag *>(tag);
-  char *s = stringToCharArray(t->group());
+  char *s = stringToCharArray(t->grouping());
   if(stringManagementEnabled)
     strings.append(s);
   return s;

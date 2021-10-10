@@ -86,7 +86,7 @@ namespace TagLib {
       /*!
        * Not supported by module files.  Therefore always returns String::null.
        */
-      virtual String group() const;
+      virtual String grouping() const;
 
       /*!
        * Not supported by module files.  Therefore always returns 0.

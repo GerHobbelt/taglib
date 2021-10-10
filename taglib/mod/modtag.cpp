@@ -83,7 +83,7 @@ String Mod::Tag::key() const
   return String();
 }
 
-String Mod::Tag::group() const
+String Mod::Tag::grouping() const
 {
   return String();
 }

@@ -86,7 +86,7 @@ namespace TagLib {
        * Returns the musical key; if no key is present in the tag String::null
        * will be returned.
        */
-      virtual String group() const;
+      virtual String grouping() const;
 
       /*!
        * Returns the rating.

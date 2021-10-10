@@ -53,16 +53,16 @@ int main(int argc, char *argv[])
 
     if(tag != NULL) {
       printf("-- TAG --\n");
-      printf("title   - \"%s\"\n", taglib_tag_title(tag));
-      printf("artist  - \"%s\"\n", taglib_tag_artist(tag));
-      printf("album   - \"%s\"\n", taglib_tag_album(tag));
-      printf("year    - \"%i\"\n", taglib_tag_year(tag));
-      printf("comment - \"%s\"\n", taglib_tag_comment(tag));
-      printf("track   - \"%i\"\n", taglib_tag_track(tag));
-      printf("bpm     - \"%i\"\n", taglib_tag_bpm(tag));
-      printf("key     - \"%s\"\n", taglib_tag_key(tag));
-      printf("group   - \"%s\"\n", taglib_tag_group(tag));
-      printf("genre   - \"%s\"\n", taglib_tag_genre(tag));
+      printf("title      - \"%s\"\n", taglib_tag_title(tag));
+      printf("artist     - \"%s\"\n", taglib_tag_artist(tag));
+      printf("album      - \"%s\"\n", taglib_tag_album(tag));
+      printf("year       - \"%i\"\n", taglib_tag_year(tag));
+      printf("comment    - \"%s\"\n", taglib_tag_comment(tag));
+      printf("track      - \"%i\"\n", taglib_tag_track(tag));
+      printf("bpm        - \"%i\"\n", taglib_tag_bpm(tag));
+      printf("key        - \"%s\"\n", taglib_tag_key(tag));
+      printf("grouping   - \"%s\"\n", taglib_tag_grouping(tag));
+      printf("genre      - \"%s\"\n", taglib_tag_genre(tag));
     }
 
     if(properties != NULL) {

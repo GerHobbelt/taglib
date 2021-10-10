@@ -122,10 +122,10 @@ String ASF::Tag::key() const
   return String();
 }
 
-String ASF::Tag::group() const
+String ASF::Tag::grouping() const
 {
-  if(d->attributeListMap.contains("WM/Grouping"))
-    return d->attributeListMap["WM/Grouping"][0].toString();
+  if(d->attributeListMap.contains("WM/ContentGroupDescription"))
+    return d->attributeListMap["WM/ContentGroupDescription"][0].toString();
   return String();
 }
 

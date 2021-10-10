@@ -118,10 +118,10 @@ String RIFF::Info::Tag::key() const
   return "";
 }
 
-String RIFF::Info::Tag::group() const
+String RIFF::Info::Tag::grouping() const
 {
-  // TODO: proper key information
-  // RIFF doesn't seem to support KEY information. 
+  // TODO: proper grouping information
+  // RIFF doesn't seem to support GROUPING information. 
   return "";
 }
 

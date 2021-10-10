@@ -200,12 +200,12 @@ TAGLIB_C_EXPORT char *taglib_tag_genre(const TagLib_Tag *tag);
 TAGLIB_C_EXPORT char *taglib_tag_key(const TagLib_Tag *tag);
 
 /*!
- * Returns a string with this tag's group.
+ * Returns a string with this tag's grouping.
  *
  * \note By default this string should be UTF8 encoded and its memory should be
  * freed using taglib_tag_free_strings().
  */
-TAGLIB_C_EXPORT char *taglib_tag_group(const TagLib_Tag *tag);
+TAGLIB_C_EXPORT char *taglib_tag_grouping(const TagLib_Tag *tag);
 
 /*!
  * Returns the tag's year or 0 if year is not set.

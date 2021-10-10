@@ -125,10 +125,11 @@ String Ogg::XiphComment::key() const
   return "";
 }
 
-String Ogg::XiphComment::group() const
+String Ogg::XiphComment::grouping() const
 {
-  // TODO: proper key information 
-  return "";
+  if(d->fieldListMap["GROUPING"].isEmpty())
+    return String();
+  return d->fieldListMap["GROUPING"].toString();
 }
 
 unsigned int Ogg::XiphComment::year() const

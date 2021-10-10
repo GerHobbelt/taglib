@@ -765,10 +765,10 @@ MP4::Tag::key() const
 }
 
 String
-MP4::Tag::group() const
+MP4::Tag::grouping() const
 {
-  if(d->items.contains("\251group"))
-    return d->items["\251group"].toStringList().toString(", ");
+  if(d->items.contains("\251grp"))
+    return d->items["\251grp"].toStringList().toString(", ");
   return String();
 }
 

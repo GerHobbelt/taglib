@@ -155,7 +155,7 @@ String ID3v1::Tag::key() const
   return "";
 }
 
-String ID3v1::Tag::group() const
+String ID3v1::Tag::grouping() const
 {
   // TODO: proper key information 
   return "";
