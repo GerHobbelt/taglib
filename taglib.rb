@@ -1,4 +1,4 @@
-class CoraliTaglib < Formula
+class Taglib < Formula
   desc "Audio metadata library"
   homepage "https://taglib.org/"
   url "https://taglib.github.io/releases/taglib-1.12.tar.gz"
