@@ -29,7 +29,12 @@
 #define FALSE 0
 #endif
 
-int main(int argc, char *argv[])
+
+#if defined(BUILD_MONOLITHIC)
+#define main    mediatag_tagreader_c_example_main
+#endif
+
+int main(int argc, const char **argv)
 {
   int i;
   int seconds;

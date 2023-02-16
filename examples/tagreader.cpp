@@ -32,7 +32,12 @@
 
 using namespace std;
 
-int main(int argc, char *argv[])
+
+#if defined(BUILD_MONOLITHIC)
+#define main    mediatag_tagreader_example_main
+#endif
+
+int main(int argc, const char **argv)
 {
   for(int i = 1; i < argc; i++) {
 

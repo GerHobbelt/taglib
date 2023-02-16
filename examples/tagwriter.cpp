@@ -39,12 +39,12 @@
 
 using namespace std;
 
-bool isArgument(const char *s)
+static bool isArgument(const char *s)
 {
   return strlen(s) == 2 && s[0] == '-';
 }
 
-bool isFile(const char *s)
+static bool isFile(const char *s)
 {
   struct stat st;
 #ifdef _WIN32
@@ -54,7 +54,7 @@ bool isFile(const char *s)
 #endif
 }
 
-void usage()
+static int usage()
 {
   cout << endl;
   cout << "Usage: tagwriter <fields> <files>" << endl;
@@ -72,10 +72,10 @@ void usage()
   cout << "  -D <tagname>"   << endl;
   cout << endl;
 
-  exit(1);
+  return 1;
 }
 
-void checkForRejectedProperties(const TagLib::PropertyMap &tags)
+static void checkForRejectedProperties(const TagLib::PropertyMap &tags)
 { // stolen from tagreader.cpp
   if(tags.size() > 0) {
     unsigned int longest = 0;
@@ -93,7 +93,12 @@ void checkForRejectedProperties(const TagLib::PropertyMap &tags)
   }
 }
 
-int main(int argc, char *argv[])
+
+#if defined(BUILD_MONOLITHIC)
+#define main    mediatag_tagwriter_example_main
+#endif
+
+int main(int argc, const char **argv)
 {
   TagLib::List<TagLib::FileRef> fileList;
 
@@ -108,7 +113,7 @@ int main(int argc, char *argv[])
   }
 
   if(fileList.isEmpty())
-    usage();
+    return usage();
 
   for(int i = 1; i < argc - 1; i += 2) {
 
@@ -158,7 +163,7 @@ int main(int argc, char *argv[])
             checkForRejectedProperties((*it).file()->setProperties(map));
           }
           else {
-            usage();
+            return usage();
           }
           break;
         case 'D': {
@@ -168,13 +173,13 @@ int main(int argc, char *argv[])
           break;
         }
         default:
-          usage();
+          return usage();
           break;
         }
       }
     }
     else
-      usage();
+      return usage();
   }
 
   TagLib::List<TagLib::FileRef>::ConstIterator it;

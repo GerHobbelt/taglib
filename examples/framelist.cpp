@@ -41,7 +41,12 @@
 using namespace std;
 using namespace TagLib;
 
-int main(int argc, char *argv[])
+
+#if defined(BUILD_MONOLITHIC)
+#define main    mediatag_framelist_example_main
+#endif
+
+int main(int argc, const char **argv)
 {
   // process the command line args
 
@@ -114,4 +119,6 @@ int main(int argc, char *argv[])
 
     cout << endl;
   }
+
+  return 0;
 }

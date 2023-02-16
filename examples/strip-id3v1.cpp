@@ -28,7 +28,12 @@
 
 using namespace TagLib;
 
-int main(int argc, char *argv[])
+
+#if defined(BUILD_MONOLITHIC)
+#define main    mediatag_strip_id3v1_example_main
+#endif
+
+int main(int argc, const char **argv)
 {
   for(int i = 1; i < argc; i++) {
 
@@ -37,4 +42,6 @@ int main(int argc, char *argv[])
     MPEG::File f(argv[i]);
     f.strip(MPEG::File::ID3v1);
   }
+
+  return 0;
 }
