@@ -149,7 +149,7 @@ public:
   TagLib::wstring data;
 
   /*!
-   * This is only used to hold the the most recent value of toCString().
+   * This is only used to hold the most recent value of toCString().
    */
   std::string cstring;
 };
