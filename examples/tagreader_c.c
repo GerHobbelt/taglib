@@ -97,6 +97,34 @@ int main(int argc, char *argv[])
       }
     }
 
+    {
+      printf("-- SET PROPERITES --\n");
+      const char* key = "taglibreader_c";
+      taglib_property_set(file, key, "new value");
+      taglib_property_set_append(file, key, "another value");
+
+	printf("== added 2x values\n");
+	propertyValues = pp1 = taglib_property_get(file, key);
+	while (pp1 && *pp1) {
+	  printf("  \"%s\"\n", *pp1);
+	  ++pp1;
+	}
+	taglib_property_free(propertyValues);
+
+      taglib_property_set(file, key, NULL);
+	propertyValues = taglib_property_get(file, key);
+	printf("== removed value, should be null - %x\n", propertyValues);
+
+	printf("== appending to empty\n");
+      taglib_property_set_append(file, key, "append value");
+	propertyValues = pp1 = taglib_property_get(file, key);
+	while (pp1 && *pp1) {
+	  printf("  \"%s\"\n", *pp1);
+	  ++pp1;
+	}
+	taglib_property_free(propertyValues);
+    }
+
     taglib_property_free(propertiesMap);
     taglib_tag_free_strings();
     taglib_file_free(file);
