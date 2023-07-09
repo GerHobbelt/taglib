@@ -430,7 +430,7 @@ char** taglib_property_keys(TagLib_File *file)
   char **pp = props;
 
   for (PropertyMap::ConstIterator i=map.begin(); i!=map.end(); ++i) {
-    *pp++ = strdup(i->first.toCString());
+    *pp++ = stringToCharArray(i->first);
   }
   *pp = NULL;
 
@@ -451,8 +451,8 @@ char **taglib_property_get(TagLib_File *file, const char *prop)
   char **props = static_cast<char **>(malloc(sizeof(char *) * (property->second.size() + 1)));
   char **pp = props;
 
-  for (StringList::ConstIterator i= property->second.begin(); i!=property->second.end(); ++i) {
-    *pp++ = strdup(i->toCString());
+  for (StringList::ConstIterator i=property->second.begin(); i!=property->second.end(); ++i) {
+    *pp++ = stringToCharArray(*i);
   }
   *pp = NULL;
 
