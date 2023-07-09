@@ -377,7 +377,6 @@ void _taglib_property_set(TagLib_File *cfile, PropertyMap& map)
   file->tag()->setProperties(map);
 }
 
-
 void _taglib_property_set(TagLib_File *file, const char* prop, const char* value, bool append)
 {
   if(file == NULL || prop == NULL)
@@ -405,7 +404,8 @@ void _taglib_property_set(TagLib_File *file, const char* prop, const char* value
 
   _taglib_property_set(file, map);
 }
-}
+
+}  // namespace
 
 void taglib_property_set(TagLib_File *f, const char *prop, const char *value)
 {
@@ -426,35 +426,33 @@ char** taglib_property_keys(TagLib_File *file)
   if(map.isEmpty()) 
     return NULL;
 
-  char **props = (char**)malloc(sizeof(char*)*(sizeof(char*) * (map.size()+1)) );
+  char **props = static_cast<char **>(malloc(sizeof(char *) * (map.size() + 1)));
   char **pp = props;
 
   for (PropertyMap::ConstIterator i=map.begin(); i!=map.end(); ++i) {
-    (*pp) = strdup(i->first.toCString());
-    ++pp;
+    *pp++ = strdup(i->first.toCString());
   }
   *pp = NULL;
 
   return props;
 }
 
-char** taglib_property_get(TagLib_File *file, const char *prop)
+char **taglib_property_get(TagLib_File *file, const char *prop)
 {
   if(file == NULL || prop == NULL)
     return NULL;
 
   const PropertyMap  map = _taglib_property_get(file);
 
-  TagLib::PropertyMap::ConstIterator  property = map.find(prop);
-  if (property == map.end())
+  TagLib::PropertyMap::ConstIterator property = map.find(prop);
+  if(property == map.end())
     return NULL;
 
-  char **props = (char**)malloc(sizeof(char*) * (property->second.size()+1) );
+  char **props = static_cast<char **>(malloc(sizeof(char *) * (property->second.size() + 1)));
   char **pp = props;
 
   for (StringList::ConstIterator i= property->second.begin(); i!=property->second.end(); ++i) {
-    (*pp) = strdup(i->toCString());
-    ++pp;
+    *pp++ = strdup(i->toCString());
   }
   *pp = NULL;
 
@@ -468,8 +466,7 @@ void taglib_property_free(char **props)
 
   char **p = props;
   while(*p) {
-      free(*p);
-      ++p;
+      free(*p++);
   }
   free(props);
 }
