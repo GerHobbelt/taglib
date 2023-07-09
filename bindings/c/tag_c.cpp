@@ -319,7 +319,8 @@ void taglib_id3v2_set_default_text_encoding(TagLib_ID3v2_Encoding encoding)
 /******************************************************************************
  * Properties API
  ******************************************************************************/
-namespace {
+namespace
+{
 PropertyMap  _taglib_property_get(TagLib_File *cfile)
 {
    const File*  file = reinterpret_cast<const File *>(cfile);
@@ -379,19 +380,18 @@ void _taglib_property_set(TagLib_File *cfile, PropertyMap& map)
 
 void _taglib_property_set(TagLib_File *file, const char* prop, const char* value, bool append)
 {
-  if (file == NULL || prop == NULL)
+  if(file == NULL || prop == NULL)
     return;
 
-  PropertyMap  map = _taglib_property_get(file);
+  PropertyMap map = _taglib_property_get(file);
 
-  if (value) {
-    TagLib::PropertyMap::Iterator  property = map.find(prop);
-    if (property == map.end()) {
+  if(value) {
+    TagLib::PropertyMap::Iterator property = map.find(prop);
+    if(property == map.end()) {
       map.insert(prop, StringList(value));
     }
-    else
-    {
-      if (append) {
+    else {
+      if(append) {
         property->second.append(value);
       }
       else {
@@ -407,27 +407,27 @@ void _taglib_property_set(TagLib_File *file, const char* prop, const char* value
 }
 }
 
-void taglib_property_set(TagLib_File *f, const char* prop, const char* value)
+void taglib_property_set(TagLib_File *f, const char *prop, const char *value)
 {
   _taglib_property_set(f, prop, value, false);
 }
 
-void taglib_property_set_append(TagLib_File *f, const char* prop, const char* value)
+void taglib_property_set_append(TagLib_File *f, const char *prop, const char *value)
 {
   _taglib_property_set(f, prop, value, true);
 }
 
 char** taglib_property_keys(TagLib_File *file)
 {
-  if (file== NULL)
+  if(file == NULL)
     return NULL;
 
   const PropertyMap  map = _taglib_property_get(file);
-  if (map.isEmpty()) 
+  if(map.isEmpty()) 
     return NULL;
 
-  char** props = (char**)malloc(sizeof(char*)*(sizeof(char*) * (map.size()+1)) );
-  char** pp = props;
+  char **props = (char**)malloc(sizeof(char*)*(sizeof(char*) * (map.size()+1)) );
+  char **pp = props;
 
   for (PropertyMap::ConstIterator i=map.begin(); i!=map.end(); ++i) {
     (*pp) = strdup(i->first.toCString());
@@ -438,9 +438,9 @@ char** taglib_property_keys(TagLib_File *file)
   return props;
 }
 
-char** taglib_property_get(TagLib_File *file, const char* prop)
+char** taglib_property_get(TagLib_File *file, const char *prop)
 {
-  if (file == NULL || prop == NULL)
+  if(file == NULL || prop == NULL)
     return NULL;
 
   const PropertyMap  map = _taglib_property_get(file);
@@ -449,8 +449,8 @@ char** taglib_property_get(TagLib_File *file, const char* prop)
   if (property == map.end())
     return NULL;
 
-  char** props = (char**)malloc(sizeof(char*) * (property->second.size()+1) );
-  char** pp = props;
+  char **props = (char**)malloc(sizeof(char*) * (property->second.size()+1) );
+  char **pp = props;
 
   for (StringList::ConstIterator i= property->second.begin(); i!=property->second.end(); ++i) {
     (*pp) = strdup(i->toCString());
@@ -461,13 +461,13 @@ char** taglib_property_get(TagLib_File *file, const char* prop)
   return props;
 }
 
-void taglib_property_free(char** props)
+void taglib_property_free(char **props)
 {
-  if (props == NULL)
+  if(props == NULL)
     return;
 
-  char**  p = props;
-  while (*p) {
+  char **p = props;
+  while(*p) {
       free(*p);
       ++p;
   }
