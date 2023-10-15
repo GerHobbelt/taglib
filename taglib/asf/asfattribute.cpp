@@ -25,7 +25,6 @@
 
 #include "asfattribute.h"
 
-#include "taglib.h"
 #include "tdebug.h"
 
 #include "asffile.h"
@@ -59,7 +58,7 @@ ASF::Attribute::Attribute() :
   d->type = UnicodeType;
 }
 
-ASF::Attribute::Attribute(const ASF::Attribute &other) = default;
+ASF::Attribute::Attribute(const ASF::Attribute &) = default;
 
 ASF::Attribute::Attribute(const String &value) :
   d(std::make_shared<AttributePrivate>())
@@ -110,11 +109,7 @@ ASF::Attribute::Attribute(bool value) :
   d->numericValue = value;
 }
 
-ASF::Attribute &ASF::Attribute::operator=(const ASF::Attribute &other)
-{
-  Attribute(other).swap(*this);
-  return *this;
-}
+ASF::Attribute &ASF::Attribute::operator=(const ASF::Attribute &) = default;
 
 void ASF::Attribute::swap(Attribute &other)
 {

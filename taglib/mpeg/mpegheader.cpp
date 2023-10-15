@@ -25,14 +25,12 @@
 
 #include "mpegheader.h"
 
+#include <array>
+
 #include "tbytevector.h"
 #include "tdebug.h"
 #include "tfile.h"
-#include "tstring.h"
-
 #include "mpegutils.h"
-
-#include <array>
 
 using namespace TagLib;
 
@@ -63,8 +61,7 @@ MPEG::Header::Header(File *file, offset_t offset, bool checkLength) :
   parse(file, offset, checkLength);
 }
 
-MPEG::Header::Header(const Header &h) = default;
-
+MPEG::Header::Header(const Header &) = default;
 MPEG::Header::~Header() = default;
 
 bool MPEG::Header::isValid() const

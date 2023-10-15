@@ -24,8 +24,6 @@
  ***************************************************************************/
 
 #include "mp4item.h"
-#include "taglib.h"
-#include "tdebug.h"
 
 using namespace TagLib;
 
@@ -53,14 +51,8 @@ MP4::Item::Item() :
   d->valid = false;
 }
 
-MP4::Item::Item(const Item &item) = default;
-
-MP4::Item &
-MP4::Item::operator=(const Item &item)
-{
-  Item(item).swap(*this);
-  return *this;
-}
+MP4::Item::Item(const Item &) = default;
+MP4::Item &MP4::Item::operator=(const Item &) = default;
 
 void
 MP4::Item::swap(Item &item)

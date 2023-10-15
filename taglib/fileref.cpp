@@ -32,28 +32,25 @@
 #include <cstring>
 #include <utility>
 
-#include "tdebug.h"
-#include "tfile.h"
 #include "tfilestream.h"
-#include "tstring.h"
-
-#include "asffile.h"
-#include "mpegfile.h"
-#include "vorbisfile.h"
-#include "flacfile.h"
-#include "oggflacfile.h"
-#include "mpcfile.h"
-#include "mp4file.h"
-#include "wavpackfile.h"
-#include "speexfile.h"
-#include "opusfile.h"
-#include "trueaudiofile.h"
+#include "tdebug.h"
 #include "aifffile.h"
-#include "wavfile.h"
 #include "apefile.h"
-#include "modfile.h"
-#include "s3mfile.h"
+#include "asffile.h"
+#include "flacfile.h"
 #include "itfile.h"
+#include "modfile.h"
+#include "mp4file.h"
+#include "mpcfile.h"
+#include "mpegfile.h"
+#include "oggflacfile.h"
+#include "opusfile.h"
+#include "s3mfile.h"
+#include "speexfile.h"
+#include "trueaudiofile.h"
+#include "vorbisfile.h"
+#include "wavfile.h"
+#include "wavpackfile.h"
 #include "xmfile.h"
 
 using namespace TagLib;
@@ -344,7 +341,7 @@ FileRef::FileRef(File *file) :
   d->file = file;
 }
 
-FileRef::FileRef(const FileRef &ref) = default;
+FileRef::FileRef(const FileRef &) = default;
 
 FileRef::~FileRef() = default;
 
@@ -430,11 +427,7 @@ bool FileRef::isNull() const
   return (!d->file || !d->file->isValid());
 }
 
-FileRef &FileRef::operator=(const FileRef &ref)
-{
-  FileRef(ref).swap(*this);
-  return *this;
-}
+FileRef &FileRef::operator=(const FileRef &) = default;
 
 void FileRef::swap(FileRef &ref)
 {
