@@ -154,12 +154,11 @@ private:
 class ByteReader : public ValueReader<unsigned char>
 {
 public:
-  ByteReader(unsigned char &byte) : ValueReader<unsigned char>(byte) {}
-
+  using ValueReader::ValueReader;
   unsigned int read(TagLib::File &file, unsigned int limit) override
   {
     ByteVector data = file.readBlock(std::min(1U,limit));
-    if(data.size() > 0) {
+    if(!data.isEmpty()) {
       value = data[0];
     }
     return data.size();
