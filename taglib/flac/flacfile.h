@@ -104,7 +104,7 @@ namespace TagLib {
        *
        * \note In the current implementation, \a propertiesStyle is ignored.
        */
-      // BIC: merge with the above constructor
+      // BIC: merge with the above constructor, kept for source compatibility
       File(FileName file, ID3v2::FrameFactory *frameFactory,
            bool readProperties = true,
            Properties::ReadStyle propertiesStyle = Properties::Average);
@@ -121,7 +121,6 @@ namespace TagLib {
        *
        * \note In the current implementation, \a propertiesStyle is ignored.
        */
-      // BIC: merge with the above constructor
       File(IOStream *stream, ID3v2::FrameFactory *frameFactory,
            bool readProperties = true,
            Properties::ReadStyle propertiesStyle = Properties::Average);
@@ -231,32 +230,6 @@ namespace TagLib {
        * \see hasXiphComment()
        */
       Ogg::XiphComment *xiphComment(bool create = false);
-
-      /*!
-       * Set the ID3v2::FrameFactory to something other than the default.  This
-       * can be used to specify the way that ID3v2 frames will be interpreted
-       * when
-       *
-       * \see ID3v2FrameFactory
-       * \deprecated This value should be passed in via the constructor.
-       */
-      TAGLIB_DEPRECATED void setID3v2FrameFactory(const ID3v2::FrameFactory *factory);
-
-      /*!
-       * Returns the block of data used by FLAC::Properties for parsing the
-       * stream properties.
-       *
-       * \deprecated Always returns an empty vector.
-       */
-      TAGLIB_DEPRECATED ByteVector streamInfoData(); // BIC: remove
-
-      /*!
-       * Returns the length of the audio-stream, used by FLAC::Properties for
-       * calculating the bitrate.
-       *
-       * \deprecated Always returns zero.
-       */
-      TAGLIB_DEPRECATED long streamLength();  // BIC: remove
 
       /*!
        * Returns a list of pictures attached to the FLAC file.

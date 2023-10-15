@@ -73,16 +73,6 @@ Mod::Tag *IT::File::tag() const
   return &d->tag;
 }
 
-PropertyMap IT::File::properties() const
-{
-  return d->tag.properties();
-}
-
-PropertyMap IT::File::setProperties(const PropertyMap &properties)
-{
-  return d->tag.setProperties(properties);
-}
-
 IT::Properties *IT::File::audioProperties() const
 {
   return &d->properties;
@@ -162,7 +152,7 @@ bool IT::File::save()
   if(!readU16L(special))
     return false;
 
-  unsigned long fileSize = File::length();
+  unsigned long fileSize = static_cast<unsigned long>(File::length());
   if(special & Properties::MessageAttached) {
     seek(54);
     if(!readU16L(messageLength) || !readU32L(messageOffset))

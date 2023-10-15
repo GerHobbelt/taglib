@@ -68,7 +68,7 @@ namespace
                           AudioProperties::ReadStyle audioPropertiesStyle)
   {
 #ifdef _WIN32
-    if(::strlen(fileName) == 0 && ::wcslen(fileName) == 0)
+    if(::wcslen(fileName) == 0)
       return 0;
 #else
     if(::strlen(fileName) == 0)
@@ -517,4 +517,12 @@ void FileRef::parse(IOStream *stream, bool readAudioProperties,
   // At last, try to resolve file types based on the actual content of the file.
 
   d->file = detectByContent(stream, readAudioProperties, audioPropertiesStyle);
+}
+
+FileRef::FileTypeResolver::~FileTypeResolver()
+{
+}
+
+FileRef::StreamTypeResolver::~StreamTypeResolver()
+{
 }

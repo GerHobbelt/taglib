@@ -26,6 +26,7 @@
 #ifndef TAGLIB_MPCPROPERTIES_H
 #define TAGLIB_MPCPROPERTIES_H
 
+#include "tbytevector.h"
 #include "taglib_export.h"
 #include "audioproperties.h"
 
@@ -48,18 +49,10 @@ namespace TagLib {
     {
     public:
       /*!
-       * Create an instance of MPC::Properties with the data read from the
-       * ByteVector \a data.
-       *
-       * This constructor is deprecated. It only works for MPC version up to 7.
-       */
-      Properties(const ByteVector &data, long streamLength, ReadStyle style = Average);
-
-      /*!
        * Create an instance of MPC::Properties with the data read directly
        * from a MPC::File.
        */
-      Properties(File *file, long streamLength, ReadStyle style = Average);
+      Properties(File *file, offset_t streamLength, ReadStyle style = Average);
 
       /*!
        * Destroys this MPC::Properties instance.
@@ -67,31 +60,11 @@ namespace TagLib {
       virtual ~Properties();
 
       /*!
-       * Returns the length of the file in seconds.  The length is rounded down to
-       * the nearest whole second.
-       *
-       * \note This method is just an alias of lengthInSeconds().
-       *
-       * \deprecated Use lengthInSeconds().
-       */
-      TAGLIB_DEPRECATED virtual int length() const;
-
-      /*!
-       * Returns the length of the file in seconds.  The length is rounded down to
-       * the nearest whole second.
-       *
-       * \see lengthInMilliseconds()
-       */
-      // BIC: make virtual
-      int lengthInSeconds() const;
-
-      /*!
        * Returns the length of the file in milliseconds.
        *
        * \see lengthInSeconds()
        */
-      // BIC: make virtual
-      int lengthInMilliseconds() const;
+      virtual int lengthInMilliseconds() const;
 
       /*!
        * Returns the average bit rate of the file in kb/s.
@@ -146,8 +119,8 @@ namespace TagLib {
       Properties(const Properties &);
       Properties &operator=(const Properties &);
 
-      void readSV7(const ByteVector &data, long streamLength);
-      void readSV8(File *file, long streamLength);
+      void readSV7(const ByteVector &data, offset_t streamLength);
+      void readSV8(File *file, offset_t streamLength);
 
       class PropertiesPrivate;
       PropertiesPrivate *d;

@@ -293,14 +293,6 @@ void Ogg::XiphComment::addField(const String &key, const String &value, bool rep
     d->fieldListMap[upperKey].append(value);
 }
 
-void Ogg::XiphComment::removeField(const String &key, const String &value)
-{
-  if(!value.isNull())
-    removeFields(key, value);
-  else
-    removeFields(key);
-}
-
 void Ogg::XiphComment::removeFields(const String &key)
 {
   d->fieldListMap.erase(key.upper());
@@ -350,11 +342,6 @@ void Ogg::XiphComment::addPicture(FLAC::Picture * picture)
 List<FLAC::Picture *> Ogg::XiphComment::pictureList()
 {
   return d->pictureList;
-}
-
-ByteVector Ogg::XiphComment::render() const
-{
-  return render(true);
 }
 
 ByteVector Ogg::XiphComment::render(bool addFramingBit) const

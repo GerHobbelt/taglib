@@ -37,10 +37,6 @@
 
 namespace TagLib {
   namespace MP4 {
-    /*!
-     * \deprecated Use ItemMap.
-     */
-    TAGLIB_DEPRECATED typedef TagLib::Map<String, Item> ItemListMap;
     typedef TagLib::Map<String, Item> ItemMap;
 
     class TAGLIB_EXPORT Tag: public TagLib::Tag
@@ -68,11 +64,6 @@ namespace TagLib {
         virtual void setTrack(unsigned int value);
 
         virtual bool isEmpty() const;
-
-        /*!
-         * \deprecated Use the item() and setItem() API instead.
-         */
-        TAGLIB_DEPRECATED ItemMap &itemListMap();
 
         /*!
          * Returns a string-keyed map of the MP4::Items for this tag.
@@ -148,8 +139,8 @@ namespace TagLib {
         ByteVector renderIntPairNoTrailing(const ByteVector &name, const Item &item) const;
         ByteVector renderCovr(const ByteVector &name, const Item &item) const;
 
-        void updateParents(const AtomList &path, long delta, int ignore = 0);
-        void updateOffsets(long delta, long offset);
+        void updateParents(const AtomList &path, offset_t delta, int ignore = 0);
+        void updateOffsets(offset_t delta, offset_t offset);
 
         void saveNew(ByteVector data);
         void saveExisting(ByteVector data, const AtomList &path);

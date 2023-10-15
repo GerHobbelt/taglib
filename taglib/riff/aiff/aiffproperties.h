@@ -48,14 +48,6 @@ namespace TagLib {
       public:
         /*!
          * Create an instance of AIFF::Properties with the data read from the
-         * ByteVector \a data.
-         *
-         * \deprecated Use Properties(File *, ReadStyle).
-         */
-        TAGLIB_DEPRECATED Properties(const ByteVector &data, ReadStyle style);
-
-        /*!
-         * Create an instance of AIFF::Properties with the data read from the
          * AIFF::File \a file.
          */
         Properties(File *file, ReadStyle style);
@@ -66,31 +58,11 @@ namespace TagLib {
         virtual ~Properties();
 
         /*!
-         * Returns the length of the file in seconds.  The length is rounded down to
-         * the nearest whole second.
-         *
-         * \note This method is just an alias of lengthInSeconds().
-         *
-         * \deprecated Use lengthInSeconds().
-         */
-        TAGLIB_DEPRECATED virtual int length() const;
-
-        /*!
-         * Returns the length of the file in seconds.  The length is rounded down to
-         * the nearest whole second.
-         *
-         * \see lengthInMilliseconds()
-         */
-        // BIC: make virtual
-        int lengthInSeconds() const;
-
-        /*!
          * Returns the length of the file in milliseconds.
          *
          * \see lengthInSeconds()
          */
-        // BIC: make virtual
-        int lengthInMilliseconds() const;
+        virtual int lengthInMilliseconds() const;
 
         /*!
          * Returns the average bit rate of the file in kb/s.
@@ -111,15 +83,6 @@ namespace TagLib {
          * Returns the number of bits per audio sample.
          */
         int bitsPerSample() const;
-
-        /*!
-         * Returns the number of bits per audio sample.
-         *
-         * \note This method is just an alias of bitsPerSample().
-         *
-         * \deprecated Use bitsPerSample().
-         */
-        TAGLIB_DEPRECATED int sampleWidth() const;
 
         /*!
          * Returns the number of sample frames

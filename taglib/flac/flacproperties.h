@@ -26,6 +26,7 @@
 #ifndef TAGLIB_FLACPROPERTIES_H
 #define TAGLIB_FLACPROPERTIES_H
 
+#include "tbytevector.h"
 #include "taglib_export.h"
 #include "audioproperties.h"
 
@@ -49,15 +50,7 @@ namespace TagLib {
        * Create an instance of FLAC::Properties with the data read from the
        * ByteVector \a data.
        */
-       // BIC: switch to const reference
-      Properties(ByteVector data, long streamLength, ReadStyle style = Average);
-
-      /*!
-       * Create an instance of FLAC::Properties with the data read from the
-       * FLAC::File \a file.
-       */
-       // BIC: remove
-      Properties(File *file, ReadStyle style = Average);
+      Properties(const ByteVector &data, offset_t streamLength, ReadStyle style = Average);
 
       /*!
        * Destroys this FLAC::Properties instance.
@@ -65,31 +58,11 @@ namespace TagLib {
       virtual ~Properties();
 
       /*!
-       * Returns the length of the file in seconds.  The length is rounded down to
-       * the nearest whole second.
-       *
-       * \note This method is just an alias of lengthInSeconds().
-       *
-       * \deprecated Use lengthInSeconds().
-       */
-      TAGLIB_DEPRECATED virtual int length() const;
-
-      /*!
-       * Returns the length of the file in seconds.  The length is rounded down to
-       * the nearest whole second.
-       *
-       * \see lengthInMilliseconds()
-       */
-      // BIC: make virtual
-      int lengthInSeconds() const;
-
-      /*!
        * Returns the length of the file in milliseconds.
        *
        * \see lengthInSeconds()
        */
-      // BIC: make virtual
-      int lengthInMilliseconds() const;
+      virtual int lengthInMilliseconds() const;
 
       /*!
        * Returns the average bit rate of the file in kb/s.
@@ -113,16 +86,6 @@ namespace TagLib {
       int bitsPerSample() const;
 
       /*!
-       * Returns the sample width as read from the FLAC identification
-       * header.
-       *
-       * \note This method is just an alias of bitsPerSample().
-       *
-       * \deprecated Use bitsPerSample().
-       */
-      TAGLIB_DEPRECATED int sampleWidth() const;
-
-      /*!
        * Return the number of sample frames.
        */
       unsigned long long sampleFrames() const;
@@ -137,7 +100,7 @@ namespace TagLib {
       Properties(const Properties &);
       Properties &operator=(const Properties &);
 
-      void read(const ByteVector &data, long streamLength);
+      void read(const ByteVector &data, offset_t streamLength);
 
       class PropertiesPrivate;
       PropertiesPrivate *d;

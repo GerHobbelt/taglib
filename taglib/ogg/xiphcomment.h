@@ -185,15 +185,6 @@ namespace TagLib {
       void addField(const String &key, const String &value, bool replace = true);
 
       /*!
-       * Remove the field specified by \a key with the data \a value.  If
-       * \a value is null, all of the fields with the given key will be removed.
-       *
-       * \deprecated Using this method may lead to a linkage error.
-       */
-      // BIC: remove and merge with below
-      TAGLIB_DEPRECATED void removeField(const String &key, const String &value = String());
-
-      /*!
        * Remove all the fields specified by \a key.
        *
        * \see removeAllFields()
@@ -223,17 +214,12 @@ namespace TagLib {
 
       /*!
        * Renders the comment to a ByteVector suitable for inserting into a file.
-       */
-      ByteVector render() const; // BIC: remove and merge with below
-
-      /*!
-       * Renders the comment to a ByteVector suitable for inserting into a file.
        *
        * If \a addFramingBit is true the standard Vorbis comment framing bit will
        * be appended.  However some formats (notably FLAC) do not work with this
        * in place.
        */
-      ByteVector render(bool addFramingBit) const;
+      ByteVector render(bool addFramingBit = true) const;
 
 
       /*!

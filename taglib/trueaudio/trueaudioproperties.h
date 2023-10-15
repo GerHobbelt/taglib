@@ -30,6 +30,7 @@
 #ifndef TAGLIB_TRUEAUDIOPROPERTIES_H
 #define TAGLIB_TRUEAUDIOPROPERTIES_H
 
+#include "tbytevector.h"
 #include "audioproperties.h"
 
 namespace TagLib {
@@ -52,7 +53,7 @@ namespace TagLib {
        * Create an instance of TrueAudio::Properties with the data read from the
        * ByteVector \a data.
        */
-      Properties(const ByteVector &data, long streamLength, ReadStyle style = Average);
+      Properties(const ByteVector &data, offset_t streamLength, ReadStyle style = Average);
 
       /*!
        * Destroys this TrueAudio::Properties instance.
@@ -63,28 +64,16 @@ namespace TagLib {
        * Returns the length of the file in seconds.  The length is rounded down to
        * the nearest whole second.
        *
-       * \note This method is just an alias of lengthInSeconds().
-       *
-       * \deprecated Use lengthInSeconds().
-       */
-      TAGLIB_DEPRECATED virtual int length() const;
-
-      /*!
-       * Returns the length of the file in seconds.  The length is rounded down to
-       * the nearest whole second.
-       *
        * \see lengthInMilliseconds()
        */
-      // BIC: make virtual
-      int lengthInSeconds() const;
+      virtual int lengthInSeconds() const;
 
       /*!
        * Returns the length of the file in milliseconds.
        *
        * \see lengthInSeconds()
        */
-      // BIC: make virtual
-      int lengthInMilliseconds() const;
+      virtual int lengthInMilliseconds() const;
 
       /*!
        * Returns the average bit rate of the file in kb/s.
@@ -120,7 +109,7 @@ namespace TagLib {
       Properties(const Properties &);
       Properties &operator=(const Properties &);
 
-      void read(const ByteVector &data, long streamLength);
+      void read(const ByteVector &data, offset_t streamLength);
 
       class PropertiesPrivate;
       PropertiesPrivate *d;

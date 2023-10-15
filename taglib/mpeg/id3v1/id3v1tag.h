@@ -59,10 +59,10 @@ namespace TagLib {
 
     class TAGLIB_EXPORT StringHandler
     {
-      TAGLIB_IGNORE_MISSING_DESTRUCTOR
     public:
-      // BIC: Add virtual destructor.
       StringHandler();
+
+      virtual ~StringHandler();
 
       /*!
        * Decode a string from \a data.  The default implementation assumes that
@@ -114,7 +114,7 @@ namespace TagLib {
        * Create an ID3v1 tag and parse the data in \a file starting at
        * \a tagOffset.
        */
-      Tag(File *file, long tagOffset);
+      Tag(File *file, offset_t tagOffset);
 
       /*!
        * Destroys this Tag instance.

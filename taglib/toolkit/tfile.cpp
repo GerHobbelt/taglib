@@ -110,118 +110,20 @@ FileName File::name() const
 
 PropertyMap File::properties() const
 {
-  // ugly workaround until this method is virtual
-  if(dynamic_cast<const APE::File* >(this))
-    return dynamic_cast<const APE::File* >(this)->properties();
-  if(dynamic_cast<const FLAC::File* >(this))
-    return dynamic_cast<const FLAC::File* >(this)->properties();
-  if(dynamic_cast<const IT::File* >(this))
-    return dynamic_cast<const IT::File* >(this)->properties();
-  if(dynamic_cast<const Mod::File* >(this))
-    return dynamic_cast<const Mod::File* >(this)->properties();
-  if(dynamic_cast<const MPC::File* >(this))
-    return dynamic_cast<const MPC::File* >(this)->properties();
-  if(dynamic_cast<const MPEG::File* >(this))
-    return dynamic_cast<const MPEG::File* >(this)->properties();
-  if(dynamic_cast<const Ogg::FLAC::File* >(this))
-    return dynamic_cast<const Ogg::FLAC::File* >(this)->properties();
-  if(dynamic_cast<const Ogg::Speex::File* >(this))
-    return dynamic_cast<const Ogg::Speex::File* >(this)->properties();
-  if(dynamic_cast<const Ogg::Opus::File* >(this))
-    return dynamic_cast<const Ogg::Opus::File* >(this)->properties();
-  if(dynamic_cast<const Ogg::Vorbis::File* >(this))
-    return dynamic_cast<const Ogg::Vorbis::File* >(this)->properties();
-  if(dynamic_cast<const RIFF::AIFF::File* >(this))
-    return dynamic_cast<const RIFF::AIFF::File* >(this)->properties();
-  if(dynamic_cast<const RIFF::WAV::File* >(this))
-    return dynamic_cast<const RIFF::WAV::File* >(this)->properties();
-  if(dynamic_cast<const S3M::File* >(this))
-    return dynamic_cast<const S3M::File* >(this)->properties();
-  if(dynamic_cast<const TrueAudio::File* >(this))
-    return dynamic_cast<const TrueAudio::File* >(this)->properties();
-  if(dynamic_cast<const WavPack::File* >(this))
-    return dynamic_cast<const WavPack::File* >(this)->properties();
-  if(dynamic_cast<const XM::File* >(this))
-    return dynamic_cast<const XM::File* >(this)->properties();
-  if(dynamic_cast<const MP4::File* >(this))
-    return dynamic_cast<const MP4::File* >(this)->properties();
-  if(dynamic_cast<const ASF::File* >(this))
-    return dynamic_cast<const ASF::File* >(this)->properties();
   return tag()->properties();
 }
 
 void File::removeUnsupportedProperties(const StringList &properties)
 {
-  // here we only consider those formats that could possibly contain
-  // unsupported properties
-  if(dynamic_cast<APE::File* >(this))
-    dynamic_cast<APE::File* >(this)->removeUnsupportedProperties(properties);
-  else if(dynamic_cast<FLAC::File* >(this))
-    dynamic_cast<FLAC::File* >(this)->removeUnsupportedProperties(properties);
-  else if(dynamic_cast<MPC::File* >(this))
-    dynamic_cast<MPC::File* >(this)->removeUnsupportedProperties(properties);
-  else if(dynamic_cast<MPEG::File* >(this))
-    dynamic_cast<MPEG::File* >(this)->removeUnsupportedProperties(properties);
-  else if(dynamic_cast<Ogg::Vorbis::File* >(this))
-    dynamic_cast<Ogg::Vorbis::File* >(this)->removeUnsupportedProperties(properties);
-  else if(dynamic_cast<RIFF::AIFF::File* >(this))
-    dynamic_cast<RIFF::AIFF::File* >(this)->removeUnsupportedProperties(properties);
-  else if(dynamic_cast<RIFF::WAV::File* >(this))
-    dynamic_cast<RIFF::WAV::File* >(this)->removeUnsupportedProperties(properties);
-  else if(dynamic_cast<TrueAudio::File* >(this))
-    dynamic_cast<TrueAudio::File* >(this)->removeUnsupportedProperties(properties);
-  else if(dynamic_cast<WavPack::File* >(this))
-    dynamic_cast<WavPack::File* >(this)->removeUnsupportedProperties(properties);
-  else if(dynamic_cast<MP4::File* >(this))
-    dynamic_cast<MP4::File* >(this)->removeUnsupportedProperties(properties);
-  else if(dynamic_cast<ASF::File* >(this))
-    dynamic_cast<ASF::File* >(this)->removeUnsupportedProperties(properties);
-  else
-    tag()->removeUnsupportedProperties(properties);
+  tag()->removeUnsupportedProperties(properties);
 }
 
 PropertyMap File::setProperties(const PropertyMap &properties)
 {
-  if(dynamic_cast<APE::File* >(this))
-    return dynamic_cast<APE::File* >(this)->setProperties(properties);
-  if(dynamic_cast<FLAC::File* >(this))
-    return dynamic_cast<FLAC::File* >(this)->setProperties(properties);
-  if(dynamic_cast<IT::File* >(this))
-    return dynamic_cast<IT::File* >(this)->setProperties(properties);
-  if(dynamic_cast<Mod::File* >(this))
-    return dynamic_cast<Mod::File* >(this)->setProperties(properties);
-  if(dynamic_cast<MPC::File* >(this))
-    return dynamic_cast<MPC::File* >(this)->setProperties(properties);
-  if(dynamic_cast<MPEG::File* >(this))
-    return dynamic_cast<MPEG::File* >(this)->setProperties(properties);
-  if(dynamic_cast<Ogg::FLAC::File* >(this))
-    return dynamic_cast<Ogg::FLAC::File* >(this)->setProperties(properties);
-  if(dynamic_cast<Ogg::Speex::File* >(this))
-    return dynamic_cast<Ogg::Speex::File* >(this)->setProperties(properties);
-  if(dynamic_cast<Ogg::Opus::File* >(this))
-    return dynamic_cast<Ogg::Opus::File* >(this)->setProperties(properties);
-  if(dynamic_cast<Ogg::Vorbis::File* >(this))
-    return dynamic_cast<Ogg::Vorbis::File* >(this)->setProperties(properties);
-  if(dynamic_cast<RIFF::AIFF::File* >(this))
-    return dynamic_cast<RIFF::AIFF::File* >(this)->setProperties(properties);
-  if(dynamic_cast<RIFF::WAV::File* >(this))
-    return dynamic_cast<RIFF::WAV::File* >(this)->setProperties(properties);
-  if(dynamic_cast<S3M::File* >(this))
-    return dynamic_cast<S3M::File* >(this)->setProperties(properties);
-  if(dynamic_cast<TrueAudio::File* >(this))
-    return dynamic_cast<TrueAudio::File* >(this)->setProperties(properties);
-  if(dynamic_cast<WavPack::File* >(this))
-    return dynamic_cast<WavPack::File* >(this)->setProperties(properties);
-  if(dynamic_cast<XM::File* >(this))
-    return dynamic_cast<XM::File* >(this)->setProperties(properties);
-  if(dynamic_cast<MP4::File* >(this))
-    return dynamic_cast<MP4::File* >(this)->setProperties(properties);
-  if(dynamic_cast<ASF::File* >(this))
-    return dynamic_cast<ASF::File* >(this)->setProperties(properties);
   return tag()->setProperties(properties);
 }
 
-ByteVector File::readBlock(unsigned long length)
+ByteVector File::readBlock(size_t length)
 {
   return d->stream->readBlock(length);
 }
@@ -231,14 +133,14 @@ void File::writeBlock(const ByteVector &data)
   d->stream->writeBlock(data);
 }
 
-long File::find(const ByteVector &pattern, long fromOffset, const ByteVector &before)
+offset_t File::find(const ByteVector &pattern, offset_t fromOffset, const ByteVector &before)
 {
   if(!d->stream || pattern.size() > bufferSize())
       return -1;
 
   // The position in the file that the current buffer starts at.
 
-  long bufferOffset = fromOffset;
+  offset_t bufferOffset = fromOffset;
   ByteVector buffer;
 
   // These variables are used to keep track of a partial match that happens at
@@ -250,7 +152,7 @@ long File::find(const ByteVector &pattern, long fromOffset, const ByteVector &be
   // Save the location of the current read pointer.  We will restore the
   // position using seek() before all returns.
 
-  long originalPosition = tell();
+  offset_t originalPosition = tell();
 
   // Start the search at the offset.
 
@@ -327,7 +229,7 @@ long File::find(const ByteVector &pattern, long fromOffset, const ByteVector &be
 }
 
 
-long File::rfind(const ByteVector &pattern, long fromOffset, const ByteVector &before)
+offset_t File::rfind(const ByteVector &pattern, offset_t fromOffset, const ByteVector &before)
 {
   if(!d->stream || pattern.size() > bufferSize())
       return -1;
@@ -347,15 +249,15 @@ long File::rfind(const ByteVector &pattern, long fromOffset, const ByteVector &b
   // Save the location of the current read pointer.  We will restore the
   // position using seek() before all returns.
 
-  long originalPosition = tell();
+  offset_t originalPosition = tell();
 
   // Start the search at the offset.
 
   if(fromOffset == 0)
     fromOffset = length();
 
-  long bufferLength = bufferSize();
-  long bufferOffset = fromOffset + pattern.size();
+  offset_t bufferLength = bufferSize();
+  offset_t bufferOffset = fromOffset + pattern.size();
 
   // See the notes in find() for an explanation of this algorithm.
 
@@ -401,12 +303,12 @@ long File::rfind(const ByteVector &pattern, long fromOffset, const ByteVector &b
   return -1;
 }
 
-void File::insert(const ByteVector &data, unsigned long start, unsigned long replace)
+void File::insert(const ByteVector &data, offset_t start, size_t replace)
 {
   d->stream->insert(data, start, replace);
 }
 
-void File::removeBlock(unsigned long start, unsigned long length)
+void File::removeBlock(offset_t start, size_t length)
 {
   d->stream->removeBlock(start, length);
 }
@@ -426,12 +328,12 @@ bool File::isValid() const
   return isOpen() && d->valid;
 }
 
-void File::seek(long offset, Position p)
+void File::seek(offset_t offset, Position p)
 {
   d->stream->seek(offset, static_cast<IOStream::Position>(p));
 }
 
-void File::truncate(long length)
+void File::truncate(offset_t length)
 {
   d->stream->truncate(length);
 }
@@ -441,44 +343,14 @@ void File::clear()
   d->stream->clear();
 }
 
-long File::tell() const
+offset_t File::tell() const
 {
   return d->stream->tell();
 }
 
-long File::length()
+offset_t File::length()
 {
   return d->stream->length();
-}
-
-bool File::isReadable(const char *file)
-{
-
-#if defined(_MSC_VER) && (_MSC_VER >= 1400)  // VC++2005 or later
-
-  return _access_s(file, R_OK) == 0;
-
-#else
-
-  return access(file, R_OK) == 0;
-
-#endif
-
-}
-
-bool File::isWritable(const char *file)
-{
-
-#if defined(_MSC_VER) && (_MSC_VER >= 1400)  // VC++2005 or later
-
-  return _access_s(file, W_OK) == 0;
-
-#else
-
-  return access(file, W_OK) == 0;
-
-#endif
-
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -494,4 +366,3 @@ void File::setValid(bool valid)
 {
   d->valid = valid;
 }
-

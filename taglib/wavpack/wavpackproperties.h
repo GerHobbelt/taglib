@@ -30,6 +30,7 @@
 #ifndef TAGLIB_WVPROPERTIES_H
 #define TAGLIB_WVPROPERTIES_H
 
+#include "tbytevector.h"
 #include "taglib_export.h"
 #include "audioproperties.h"
 
@@ -52,19 +53,9 @@ namespace TagLib {
     {
     public:
       /*!
-       * Create an instance of WavPack::Properties with the data read from the
-       * ByteVector \a data.
-       *
-       * \deprecated This constructor will be dropped in favor of the one below
-       * in a future version.
-       */
-      TAGLIB_DEPRECATED Properties(const ByteVector &data, long streamLength,
-                                   ReadStyle style = Average);
-
-      /*!
        * Create an instance of WavPack::Properties.
        */
-      Properties(File *file, long streamLength, ReadStyle style = Average);
+      Properties(File *file, offset_t streamLength, ReadStyle style = Average);
 
       /*!
        * Destroys this WavPack::Properties instance.
@@ -72,31 +63,11 @@ namespace TagLib {
       virtual ~Properties();
 
       /*!
-       * Returns the length of the file in seconds.  The length is rounded down to
-       * the nearest whole second.
-       *
-       * \note This method is just an alias of lengthInSeconds().
-       *
-       * \deprecated Use lengthInSeconds().
-       */
-      TAGLIB_DEPRECATED virtual int length() const;
-
-      /*!
-       * Returns the length of the file in seconds.  The length is rounded down to
-       * the nearest whole second.
-       *
-       * \see lengthInMilliseconds()
-       */
-      // BIC: make virtual
-      int lengthInSeconds() const;
-
-      /*!
        * Returns the length of the file in milliseconds.
        *
        * \see lengthInSeconds()
        */
-      // BIC: make virtual
-      int lengthInMilliseconds() const;
+      virtual int lengthInMilliseconds() const;
 
       /*!
        * Returns the average bit rate of the file in kb/s.
@@ -137,8 +108,8 @@ namespace TagLib {
       Properties(const Properties &);
       Properties &operator=(const Properties &);
 
-      void read(File *file, long streamLength);
-      unsigned int seekFinalIndex(File *file, long streamLength);
+      void read(File *file, offset_t streamLength);
+      unsigned int seekFinalIndex(File *file, offset_t streamLength);
 
       class PropertiesPrivate;
       PropertiesPrivate *d;

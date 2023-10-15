@@ -66,14 +66,7 @@ public:
 // public members
 ////////////////////////////////////////////////////////////////////////////////
 
-WavPack::Properties::Properties(const ByteVector &, long, ReadStyle style) :
-  AudioProperties(style),
-  d(new PropertiesPrivate())
-{
-  debug("WavPack::Properties::Properties() -- This constructor is no longer used.");
-}
-
-WavPack::Properties::Properties(File *file, long streamLength, ReadStyle style) :
+WavPack::Properties::Properties(File *file, offset_t streamLength, ReadStyle style) :
   AudioProperties(style),
   d(new PropertiesPrivate())
 {
@@ -83,16 +76,6 @@ WavPack::Properties::Properties(File *file, long streamLength, ReadStyle style) 
 WavPack::Properties::~Properties()
 {
   delete d;
-}
-
-int WavPack::Properties::length() const
-{
-  return lengthInSeconds();
-}
-
-int WavPack::Properties::lengthInSeconds() const
-{
-  return d->length / 1000;
 }
 
 int WavPack::Properties::lengthInMilliseconds() const
@@ -257,9 +240,9 @@ namespace
 
 }  // namespace
 
-void WavPack::Properties::read(File *file, long streamLength)
+void WavPack::Properties::read(File *file, offset_t streamLength)
 {
-  long offset = 0;
+  offset_t offset = 0;
 
   while(true) {
     file->seek(offset);
@@ -339,9 +322,9 @@ void WavPack::Properties::read(File *file, long streamLength)
   }
 }
 
-unsigned int WavPack::Properties::seekFinalIndex(File *file, long streamLength)
+unsigned int WavPack::Properties::seekFinalIndex(File *file, offset_t streamLength)
 {
-  long offset = streamLength;
+  offset_t offset = streamLength;
 
   while (offset >= 32) {
     offset = file->rfind("wvpk", offset - 4);

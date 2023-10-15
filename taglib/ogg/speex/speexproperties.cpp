@@ -77,16 +77,6 @@ Speex::Properties::~Properties()
   delete d;
 }
 
-int Speex::Properties::length() const
-{
-  return lengthInSeconds();
-}
-
-int Speex::Properties::lengthInSeconds() const
-{
-  return d->length / 1000;
-}
-
 int Speex::Properties::lengthInMilliseconds() const
 {
   return d->length;
@@ -182,7 +172,7 @@ void Speex::Properties::read(File *file)
 
       if(frameCount > 0) {
         const double length = frameCount * 1000.0 / d->sampleRate;
-        long fileLengthWithoutOverhead = file->length();
+        offset_t fileLengthWithoutOverhead = file->length();
         // Ignore the two header packets, see "Ogg file format" in
         // https://www.speex.org/docs/manual/speex-manual/node8.html
         for (unsigned int i = 0; i < 2; ++i) {

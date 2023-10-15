@@ -61,13 +61,13 @@ public:
     delete properties;
   }
 
-  long APELocation;
+  offset_t APELocation;
   long APESize;
 
-  long ID3v1Location;
+  offset_t ID3v1Location;
 
   ID3v2::Header *ID3v2Header;
-  long ID3v2Location;
+  offset_t ID3v2Location;
   long ID3v2Size;
 
   TagUnion tag;
@@ -255,11 +255,6 @@ void MPC::File::strip(int tags)
   }
 }
 
-void MPC::File::remove(int tags)
-{
-  strip(tags);
-}
-
 bool MPC::File::hasID3v1Tag() const
 {
   return (d->ID3v1Location >= 0);
@@ -310,7 +305,7 @@ void MPC::File::read(bool readProperties)
 
   if(readProperties) {
 
-    long streamLength;
+    offset_t streamLength;
 
     if(d->APELocation >= 0)
       streamLength = d->APELocation;

@@ -63,10 +63,10 @@ public:
   }
 
   const ID3v2::FrameFactory *ID3v2FrameFactory;
-  long ID3v2Location;
+  offset_t ID3v2Location;
   long ID3v2OriginalSize;
 
-  long ID3v1Location;
+  offset_t ID3v1Location;
 
   TagUnion tag;
 
@@ -154,11 +154,6 @@ PropertyMap TrueAudio::File::setProperties(const PropertyMap &properties)
 TrueAudio::Properties *TrueAudio::File::audioProperties() const
 {
   return d->properties;
-}
-
-void TrueAudio::File::setID3v2FrameFactory(const ID3v2::FrameFactory *factory)
-{
-  d->ID3v2FrameFactory = factory;
 }
 
 bool TrueAudio::File::save()
@@ -290,7 +285,7 @@ void TrueAudio::File::read(bool readProperties)
 
   if(readProperties) {
 
-    long streamLength;
+    offset_t streamLength;
 
     if(d->ID3v1Location >= 0)
       streamLength = d->ID3v1Location;
