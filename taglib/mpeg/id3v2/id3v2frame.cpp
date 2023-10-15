@@ -23,14 +23,15 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
+#include "id3v2frame.h"
+
 #include <bitset>
 
-#include <tdebug.h>
-#include <tstringlist.h>
-#include <tzlib.h>
+#include "tdebug.h"
+#include "tstringlist.h"
+#include "tzlib.h"
 
 #include "id3v2tag.h"
-#include "id3v2frame.h"
 #include "id3v2synchdata.h"
 
 #include "tpropertymap.h"

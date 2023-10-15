@@ -23,12 +23,13 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <tbytevector.h>
-#include <tdebug.h>
+#include "xiphcomment.h"
 
-#include <flacpicture.h>
-#include <xiphcomment.h>
-#include <tpropertymap.h>
+#include "tbytevector.h"
+#include "tdebug.h"
+
+#include "flacpicture.h"
+#include "tpropertymap.h"
 
 using namespace TagLib;
 

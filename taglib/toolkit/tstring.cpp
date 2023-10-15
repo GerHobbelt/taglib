@@ -23,17 +23,17 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
+#include "tstring.h"
+
 #include <cerrno>
 #include <climits>
 
 #include <utf8-cpp/checked.h>
 
-#include <tdebug.h>
-#include <tstringlist.h>
-#include <trefcounter.h>
-#include <tutils.h>
-
-#include "tstring.h"
+#include "tdebug.h"
+#include "tstringlist.h"
+#include "trefcounter.h"
+#include "tutils.h"
 
 namespace
 {

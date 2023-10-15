@@ -23,9 +23,9 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <taglib.h>
-#include <tdebug.h>
 #include "flacpicture.h"
+#include "taglib.h"
+#include "tdebug.h"
 
 using namespace TagLib;
 
@@ -214,4 +214,3 @@ void FLAC::Picture::setData(const ByteVector &data)
 {
   d->data = data;
 }
-

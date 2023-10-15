@@ -27,15 +27,16 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
+#include "fileref.h"
+
 #include <cstring>
 
-#include <tfile.h>
-#include <tfilestream.h>
-#include <tstring.h>
-#include <tdebug.h>
-#include <trefcounter.h>
+#include "tfile.h"
+#include "tfilestream.h"
+#include "tstring.h"
+#include "tdebug.h"
+#include "trefcounter.h"
 
-#include "fileref.h"
 #include "asffile.h"
 #include "mpegfile.h"
 #include "vorbisfile.h"

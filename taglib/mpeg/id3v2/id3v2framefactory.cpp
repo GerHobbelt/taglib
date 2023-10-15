@@ -23,10 +23,11 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <tdebug.h>
-#include <tzlib.h>
-
 #include "id3v2framefactory.h"
+
+#include "tdebug.h"
+#include "tzlib.h"
+
 #include "id3v2synchdata.h"
 #include "id3v1genres.h"
 
@@ -115,9 +116,9 @@ FrameFactory *FrameFactory::instance()
   return &factory;
 }
 
-Frame *FrameFactory::createFrame(const ByteVector &origData, const Header *tagHeader) const
+std::pair<Frame::Header *, bool> FrameFactory::prepareFrameHeader(
+  ByteVector &data, const Header *tagHeader) const
 {
-  ByteVector data = origData;
   unsigned int version = tagHeader->majorVersion();
   auto header = new Frame::Header(data, version);
   ByteVector frameID = header->frameID();
@@ -130,7 +131,7 @@ Frame *FrameFactory::createFrame(const ByteVector &origData, const Header *tagHe
      header->frameSize() > data.size())
   {
     delete header;
-    return nullptr;
+    return {nullptr, false};
   }
 
 #ifndef NO_ITUNES_HACKS
@@ -147,7 +148,7 @@ Frame *FrameFactory::createFrame(const ByteVector &origData, const Header *tagHe
   for(auto it = frameID.cbegin(); it != frameID.cend(); it++) {
     if( (*it < 'A' || *it > 'Z') && (*it < '0' || *it > '9') ) {
       delete header;
-      return nullptr;
+      return {nullptr, false};
     }
   }
 
@@ -164,24 +165,39 @@ Frame *FrameFactory::createFrame(const ByteVector &origData, const Header *tagHe
 
   if(!zlib::isAvailable() && header->compression()) {
     debug("Compressed frames are currently not supported.");
-    return new UnknownFrame(data, header);
+    return {header, false};
   }
 
   if(header->encryption()) {
     debug("Encrypted frames are currently not supported.");
-    return new UnknownFrame(data, header);
+    return {header, false};
   }
 
   if(!updateFrame(header)) {
     header->setTagAlterPreservation(true);
-    return new UnknownFrame(data, header);
+    return {header, false};
   }
 
-  // updateFrame() might have updated the frame ID.
+  return {header, true};
+}
 
-  frameID = header->frameID();
+Frame *FrameFactory::createFrame(const ByteVector &origData,
+                                 const Header *tagHeader) const
+{
+  ByteVector data = origData;
+  auto [header, ok] = prepareFrameHeader(data, tagHeader);
+  if(!ok) {
+    // check if frame is valid and return as UnknownFrame
+    return header ? new UnknownFrame(data, header) : nullptr;
+  }
+  return createFrame(data, header, tagHeader);
+}
 
-  // This is where things get necissarily nasty.  Here we determine which
+Frame *FrameFactory::createFrame(const ByteVector &data, Frame::Header *header,
+                                 const Header *tagHeader) const {
+  ByteVector frameID = header->frameID();
+
+  // This is where things get necessarily nasty.  Here we determine which
   // Frame subclass (or if none is found simply an Frame) based
   // on the frame ID.  Since there are a lot of possibilities, that means
   // a lot of if blocks.

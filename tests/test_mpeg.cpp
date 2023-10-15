@@ -25,16 +25,16 @@
 
 #include <string>
 #include <cstdio>
-#include <tstring.h>
-#include <tpropertymap.h>
-#include <mpegfile.h>
-#include <id3v2tag.h>
-#include <id3v1tag.h>
-#include <apetag.h>
-#include <mpegproperties.h>
-#include <xingheader.h>
-#include <mpegheader.h>
-#include <id3v2extendedheader.h>
+#include "tstring.h"
+#include "tpropertymap.h"
+#include "mpegfile.h"
+#include "id3v2tag.h"
+#include "id3v1tag.h"
+#include "apetag.h"
+#include "mpegproperties.h"
+#include "xingheader.h"
+#include "mpegheader.h"
+#include "id3v2extendedheader.h"
 #include <cppunit/extensions/HelperMacros.h>
 #include "utils.h"
 
@@ -186,7 +186,7 @@ public:
     }
     {
       MPEG::File f2(newname.c_str());
-      CPPUNIT_ASSERT_EQUAL((unsigned int)4, f2.ID3v2Tag()->header()->majorVersion());
+      CPPUNIT_ASSERT_EQUAL(static_cast<unsigned int>(4), f2.ID3v2Tag()->header()->majorVersion());
       CPPUNIT_ASSERT_EQUAL(String("Artist A"), f2.tag()->artist());
       CPPUNIT_ASSERT_EQUAL(xxx, f2.tag()->title());
     }
@@ -209,7 +209,7 @@ public:
     }
     {
       MPEG::File f2(newname.c_str());
-      CPPUNIT_ASSERT_EQUAL((unsigned int)3, f2.ID3v2Tag()->header()->majorVersion());
+      CPPUNIT_ASSERT_EQUAL(static_cast<unsigned int>(3), f2.ID3v2Tag()->header()->majorVersion());
       CPPUNIT_ASSERT_EQUAL(String("Artist A"), f2.tag()->artist());
       CPPUNIT_ASSERT_EQUAL(xxx, f2.tag()->title());
     }

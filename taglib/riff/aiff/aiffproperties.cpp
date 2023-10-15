@@ -23,10 +23,10 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <tstring.h>
-#include <tdebug.h>
-#include "aifffile.h"
 #include "aiffproperties.h"
+
+#include "tdebug.h"
+#include "aifffile.h"
 
 using namespace TagLib;
 

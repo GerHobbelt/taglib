@@ -25,13 +25,13 @@
 
 #include <string>
 #include <cstdio>
-#include <id3v2tag.h>
-#include <infotag.h>
-#include <tbytevectorlist.h>
-#include <tbytevectorstream.h>
-#include <tfilestream.h>
-#include <tpropertymap.h>
-#include <wavfile.h>
+#include "id3v2tag.h"
+#include "infotag.h"
+#include "tbytevectorlist.h"
+#include "tbytevectorstream.h"
+#include "tfilestream.h"
+#include "tpropertymap.h"
+#include "wavfile.h"
 #include <cppunit/extensions/HelperMacros.h>
 #include "plainfile.h"
 #include "utils.h"
@@ -182,7 +182,7 @@ public:
     }
     {
       RIFF::WAV::File f2(newname.c_str());
-      CPPUNIT_ASSERT_EQUAL((unsigned int)3, f2.ID3v2Tag()->header()->majorVersion());
+      CPPUNIT_ASSERT_EQUAL(static_cast<unsigned int>(3), f2.ID3v2Tag()->header()->majorVersion());
       CPPUNIT_ASSERT_EQUAL(String("Artist A"), f2.tag()->artist());
       CPPUNIT_ASSERT_EQUAL(xxx, f2.tag()->title());
     }

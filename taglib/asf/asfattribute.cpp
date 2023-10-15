@@ -23,11 +23,12 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <taglib.h>
-#include <tdebug.h>
-#include <trefcounter.h>
-
 #include "asfattribute.h"
+
+#include "taglib.h"
+#include "tdebug.h"
+#include "trefcounter.h"
+
 #include "asffile.h"
 #include "asfutils.h"
 

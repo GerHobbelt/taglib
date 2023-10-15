@@ -25,9 +25,9 @@
 
 #include <string>
 #include <cstdio>
-#include <tag.h>
-#include <tbytevectorlist.h>
-#include <aifffile.h>
+#include "tag.h"
+#include "tbytevectorlist.h"
+#include "aifffile.h"
 #include <cppunit/extensions/HelperMacros.h>
 #include "utils.h"
 
@@ -123,7 +123,7 @@ public:
     }
     {
       RIFF::AIFF::File f2(newname.c_str());
-      CPPUNIT_ASSERT_EQUAL((unsigned int)3, f2.tag()->header()->majorVersion());
+      CPPUNIT_ASSERT_EQUAL(static_cast<unsigned int>(3), f2.tag()->header()->majorVersion());
       CPPUNIT_ASSERT_EQUAL(String("Artist A"), f2.tag()->artist());
       CPPUNIT_ASSERT_EQUAL(xxx, f2.tag()->title());
     }
