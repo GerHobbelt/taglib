@@ -58,7 +58,7 @@ namespace
     StringList fields = frame->fieldList();
     StringList newfields;
 
-    for(StringList::ConstIterator it = fields.begin(); it != fields.end(); ++it) {
+    for(StringList::ConstIterator it = fields.cbegin(); it != fields.cend(); ++it) {
       String s = *it;
       int offset = 0;
       int end = 0;
@@ -130,7 +130,7 @@ Frame *FrameFactory::createFrame(const ByteVector &origData, const Header *tagHe
      header->frameSize() > data.size())
   {
     delete header;
-    return 0;
+    return nullptr;
   }
 
 #ifndef NO_ITUNES_HACKS
@@ -144,10 +144,10 @@ Frame *FrameFactory::createFrame(const ByteVector &origData, const Header *tagHe
   }
 #endif
 
-  for(ByteVector::ConstIterator it = frameID.begin(); it != frameID.end(); it++) {
+  for(ByteVector::ConstIterator it = frameID.cbegin(); it != frameID.cend(); it++) {
     if( (*it < 'A' || *it > 'Z') && (*it < '0' || *it > '9') ) {
       delete header;
-      return 0;
+      return nullptr;
     }
   }
 

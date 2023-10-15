@@ -127,14 +127,14 @@ PropertyMap UnsynchronizedLyricsFrame::asProperties() const
 
 UnsynchronizedLyricsFrame *UnsynchronizedLyricsFrame::findByDescription(const ID3v2::Tag *tag, const String &d) // static
 {
-  ID3v2::FrameList lyrics = tag->frameList("USLT");
+  const ID3v2::FrameList lyrics = tag->frameList("USLT");
 
   for(ID3v2::FrameList::ConstIterator it = lyrics.begin(); it != lyrics.end(); ++it){
     UnsynchronizedLyricsFrame *frame = dynamic_cast<UnsynchronizedLyricsFrame *>(*it);
     if(frame && frame->description() == d)
       return frame;
   }
-  return 0;
+  return nullptr;
 }
 ////////////////////////////////////////////////////////////////////////////////
 // protected members

@@ -52,7 +52,7 @@ namespace
 
   bool isKeyValid(const ByteVector &key)
   {
-    const char *invalidKeys[] = { "ID3", "TAG", "OGGS", "MP+", 0 };
+    const char *invalidKeys[] = { "ID3", "TAG", "OGGS", "MP+", nullptr };
 
     // only allow printable ASCII including space (32..126)
 
@@ -63,7 +63,7 @@ namespace
     }
 
     const String upperKey = String(key).upper();
-    for(size_t i = 0; invalidKeys[i] != 0; ++i) {
+    for(size_t i = 0; invalidKeys[i] != nullptr; ++i) {
       if(upperKey == invalidKeys[i])
         return false;
     }
@@ -76,7 +76,7 @@ class APE::Tag::TagPrivate
 {
 public:
   TagPrivate() :
-    file(0),
+    file(nullptr),
     footerLocation(0) {}
 
   File *file;
@@ -265,13 +265,13 @@ PropertyMap APE::Tag::setProperties(const PropertyMap &origProps)
       toRemove.append(remIt->first);
   }
 
-  for(StringList::ConstIterator removeIt = toRemove.begin(); removeIt != toRemove.end(); removeIt++)
+  for(StringList::ConstIterator removeIt = toRemove.cbegin(); removeIt != toRemove.cend(); removeIt++)
     removeItem(*removeIt);
 
   // now sync in the "forward direction"
-  PropertyMap::ConstIterator it = properties.begin();
+  PropertyMap::ConstIterator it = properties.cbegin();
   PropertyMap invalid;
-  for(; it != properties.end(); ++it) {
+  for(; it != properties.cend(); ++it) {
     const String &tagName = it->first;
     if(!checkKey(tagName))
       invalid.insert(it->first, it->second);
@@ -382,7 +382,7 @@ ByteVector APE::Tag::render() const
   ByteVector data;
   unsigned int itemCount = 0;
 
-  for(ItemListMap::ConstIterator it = d->itemListMap.begin(); it != d->itemListMap.end(); ++it) {
+  for(ItemListMap::ConstIterator it = d->itemListMap.cbegin(); it != d->itemListMap.cend(); ++it) {
     data.append(it->second.render());
     itemCount++;
   }

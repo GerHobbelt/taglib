@@ -392,12 +392,12 @@ ByteVector &ByteVector::setData(const char *data)
 char *ByteVector::data()
 {
   detach();
-  return (size() > 0) ? (&(*d->data)[d->offset]) : 0;
+  return (size() > 0) ? (&(*d->data)[d->offset]) : nullptr;
 }
 
 const char *ByteVector::data() const
 {
-  return (size() > 0) ? (&(*d->data)[d->offset]) : 0;
+  return (size() > 0) ? (&(*d->data)[d->offset]) : nullptr;
 }
 
 ByteVector ByteVector::mid(unsigned int index, unsigned int length) const
@@ -616,6 +616,11 @@ ByteVector::ConstIterator ByteVector::begin() const
   return d->data->begin() + d->offset;
 }
 
+ByteVector::ConstIterator ByteVector::cbegin() const
+{
+  return d->data->cbegin() + d->offset;
+}
+
 ByteVector::Iterator ByteVector::end()
 {
   detach();
@@ -625,6 +630,11 @@ ByteVector::Iterator ByteVector::end()
 ByteVector::ConstIterator ByteVector::end() const
 {
   return d->data->begin() + d->offset + d->length;
+}
+
+ByteVector::ConstIterator ByteVector::cend() const
+{
+  return d->data->cbegin() + d->offset + d->length;
 }
 
 ByteVector::ReverseIterator ByteVector::rbegin()

@@ -47,7 +47,7 @@ namespace
 {
   typedef List<FLAC::MetadataBlock *> BlockList;
   typedef BlockList::Iterator BlockIterator;
-  typedef BlockList::Iterator BlockConstIterator;
+  typedef BlockList::ConstIterator BlockConstIterator;
 
   enum { FlacXiphIndex = 0, FlacID3v2Index = 1, FlacID3v1Index = 2 };
 
@@ -65,7 +65,7 @@ public:
     ID3v2Location(-1),
     ID3v2OriginalSize(0),
     ID3v1Location(-1),
-    properties(0),
+    properties(nullptr),
     flacStart(0),
     streamStart(0),
     scanned(false)
@@ -199,7 +199,7 @@ bool FLAC::File::save()
     if(commentBlock && (*it)->code() == MetadataBlock::Picture) {
       // Set the new Vorbis Comment block before the first picture block
       d->blocks.insert(it, commentBlock);
-      commentBlock = 0;
+      commentBlock = nullptr;
     }
     ++it;
   }
@@ -209,7 +209,7 @@ bool FLAC::File::save()
   // Render data for the metadata blocks
 
   ByteVector data;
-  for(BlockConstIterator it = d->blocks.begin(); it != d->blocks.end(); ++it) {
+  for(BlockConstIterator it = d->blocks.cbegin(); it != d->blocks.cend(); ++it) {
     ByteVector blockData = (*it)->render();
     ByteVector blockHeader = ByteVector::fromUInt(blockData.size());
     blockHeader[0] = (*it)->code();
@@ -333,7 +333,7 @@ Ogg::XiphComment *FLAC::File::xiphComment(bool create)
 List<FLAC::Picture *> FLAC::File::pictureList()
 {
   List<Picture *> pictures;
-  for(BlockConstIterator it = d->blocks.begin(); it != d->blocks.end(); ++it) {
+  for(BlockConstIterator it = d->blocks.cbegin(); it != d->blocks.cend(); ++it) {
     Picture *picture = dynamic_cast<Picture *>(*it);
     if(picture) {
       pictures.append(picture);
@@ -373,10 +373,10 @@ void FLAC::File::removePictures()
 void FLAC::File::strip(int tags)
 {
   if(tags & ID3v1)
-    d->tag.set(FlacID3v1Index, 0);
+    d->tag.set(FlacID3v1Index, nullptr);
 
   if(tags & ID3v2)
-    d->tag.set(FlacID3v2Index, 0);
+    d->tag.set(FlacID3v2Index, nullptr);
 
   if(tags & XiphComment) {
     xiphComment()->removeAllFields();
@@ -525,7 +525,7 @@ void FLAC::File::scan()
       return;
     }
 
-    MetadataBlock *block = 0;
+    MetadataBlock *block = nullptr;
 
     // Found the vorbis-comment
     if(blockType == MetadataBlock::VorbisComment) {
