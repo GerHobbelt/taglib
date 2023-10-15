@@ -25,9 +25,13 @@
 
 #include "tableofcontentsframe.h"
 
+#include <utility>
+
 #include "tbytevectorlist.h"
 #include "tpropertymap.h"
 #include "tdebug.h"
+
+#include <utility>
 
 using namespace TagLib;
 using namespace ID3v2;
@@ -66,9 +70,8 @@ namespace {
 
   ByteVectorList &strip(ByteVectorList &l)
   {
-    for(auto it = l.begin(); it != l.end(); ++it)
-    {
-      strip(*it);
+    for(auto &v : l) {
+      strip(v);
     }
     return l;
   }
@@ -96,8 +99,8 @@ TableOfContentsFrame::TableOfContentsFrame(const ByteVector &elementID,
   strip(d->elementID);
   d->childElements = children;
 
-  for(auto it = embeddedFrames.begin(); it != embeddedFrames.end(); ++it)
-    addEmbeddedFrame(*it);
+  for(const auto &frame : embeddedFrames)
+    addEmbeddedFrame(frame);
 }
 
 TableOfContentsFrame::~TableOfContentsFrame() = default;
@@ -207,9 +210,9 @@ void TableOfContentsFrame::removeEmbeddedFrame(Frame *frame, bool del)
 
 void TableOfContentsFrame::removeEmbeddedFrames(const ByteVector &id)
 {
-  const FrameList l = d->embeddedFrameListMap[id];
-  for(auto it = l.begin(); it != l.end(); ++it)
-    removeEmbeddedFrame(*it, true);
+  const FrameList frames = d->embeddedFrameListMap[id];
+  for(const auto &frame : frames)
+    removeEmbeddedFrame(frame, true);
 }
 
 String TableOfContentsFrame::toString() const
@@ -224,8 +227,8 @@ String TableOfContentsFrame::toString() const
 
   if(!d->embeddedFrameList.isEmpty()) {
     StringList frameIDs;
-    for(auto it = d->embeddedFrameList.cbegin(); it != d->embeddedFrameList.cend(); ++it)
-      frameIDs.append((*it)->frameID());
+    for(const auto &frame : std::as_const(d->embeddedFrameList))
+      frameIDs.append(frame->frameID());
     s += ", sub-frames: [ " + frameIDs.toString(", ") + " ]";
   }
 
@@ -244,13 +247,8 @@ PropertyMap TableOfContentsFrame::asProperties() const
 TableOfContentsFrame *TableOfContentsFrame::findByElementID(const ID3v2::Tag *tag,
                                                             const ByteVector &eID) // static
 {
-  const ID3v2::FrameList tablesOfContents = tag->frameList("CTOC");
-
-  for(auto it = tablesOfContents.begin();
-      it != tablesOfContents.end();
-      ++it)
-  {
-    auto frame = dynamic_cast<TableOfContentsFrame *>(*it);
+  for(const auto &table : std::as_const(tag->frameList("CTOC"))) {
+    auto frame = dynamic_cast<TableOfContentsFrame *>(table);
     if(frame && frame->elementID() == eID)
       return frame;
   }
@@ -260,11 +258,8 @@ TableOfContentsFrame *TableOfContentsFrame::findByElementID(const ID3v2::Tag *ta
 
 TableOfContentsFrame *TableOfContentsFrame::findTopLevel(const ID3v2::Tag *tag) // static
 {
-  const ID3v2::FrameList tablesOfContents = tag->frameList("CTOC");
-
-  for(auto it = tablesOfContents.begin(); it != tablesOfContents.end(); ++it)
-  {
-    auto frame = dynamic_cast<TableOfContentsFrame *>(*it);
+  for(const auto &table : std::as_const(tag->frameList("CTOC"))) {
+    auto frame = dynamic_cast<TableOfContentsFrame *>(table);
     if(frame && frame->isTopLevel())
       return frame;
   }
@@ -328,11 +323,11 @@ ByteVector TableOfContentsFrame::renderFields() const
     flags += 1;
   data.append(flags);
   data.append(static_cast<char>(entryCount()));
-  for(const auto &element : d->childElements) {
+  for(const auto &element : std::as_const(d->childElements)) {
     data.append(element);
     data.append('\0');
   }
-  for(const auto &frame : d->embeddedFrameList) {
+  for(const auto &frame : std::as_const(d->embeddedFrameList)) {
     frame->header()->setVersion(header()->version());
     data.append(frame->render());
   }
