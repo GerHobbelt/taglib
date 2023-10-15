@@ -90,7 +90,7 @@ unsigned int pageChecksum(const ByteVector &data)
   };
 
   unsigned int sum = 0;
-  for(ByteVector::ConstIterator it = data.begin(); it != data.end(); ++it)
+  for(auto it = data.begin(); it != data.end(); ++it)
     sum = (sum << 8) ^ crcTable[((sum >> 24) & 0xff) ^ static_cast<unsigned char>(*it)];
   return sum;
 }
@@ -213,8 +213,7 @@ ByteVectorList Ogg::Page::packets() const
 
     const List<int> packetSizes = d->header.packetSizes();
 
-    List<int>::ConstIterator it = packetSizes.begin();
-    for(; it != packetSizes.end(); ++it)
+    for(auto it = packetSizes.begin(); it != packetSizes.end(); ++it)
       l.append(d->file->readBlock(*it));
   }
   else
@@ -243,8 +242,7 @@ ByteVector Ogg::Page::render() const
       debug("Ogg::Page::render() -- this page is empty!");
   }
   else {
-    ByteVectorList::ConstIterator it = d->packets.cbegin();
-    for(; it != d->packets.cend(); ++it)
+    for(auto it = d->packets.cbegin(); it != d->packets.cend(); ++it)
       data.append(*it);
   }
 
@@ -276,7 +274,7 @@ List<Ogg::Page *> Ogg::Page::paginate(const ByteVectorList &packets,
   if(strategy != Repaginate) {
 
     size_t tableSize = 0;
-    for(ByteVectorList::ConstIterator it = packets.begin(); it != packets.end(); ++it)
+    for(auto it = packets.begin(); it != packets.end(); ++it)
       tableSize += it->size() / 255 + 1;
 
     if(tableSize > 255)
@@ -291,7 +289,7 @@ List<Ogg::Page *> Ogg::Page::paginate(const ByteVectorList &packets,
 
     int pageIndex = firstPage;
 
-    for(ByteVectorList::ConstIterator it = packets.begin(); it != packets.end(); ++it) {
+    for(auto it = packets.begin(); it != packets.end(); ++it) {
 
       const bool lastPacketInList = (it == --packets.end());
 
@@ -356,7 +354,7 @@ Ogg::Page::Page(const ByteVectorList &packets,
   ByteVector data;
   List<int> packetSizes;
 
-  for(ByteVectorList::ConstIterator it = packets.begin(); it != packets.end(); ++it) {
+  for(auto it = packets.begin(); it != packets.end(); ++it) {
     packetSizes.append((*it).size());
     data.append(*it);
   }

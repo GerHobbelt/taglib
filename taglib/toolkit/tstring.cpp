@@ -140,8 +140,7 @@ namespace TagLib {
 class String::StringPrivate : public RefCounter
 {
 public:
-  StringPrivate()
-    {}
+  StringPrivate() = default;
 
   /*!
    * Stores string in UTF-16. The byte order depends on the CPU endian.
@@ -432,7 +431,7 @@ ByteVector String::data(Type t) const
       ByteVector v(size() * 4, 0);
 
       try {
-        const ByteVector::Iterator dstEnd = utf8::utf16to8(begin(), end(), v.begin());
+        const auto dstEnd = utf8::utf16to8(begin(), end(), v.begin());
         v.resize(static_cast<unsigned int>(dstEnd - v.begin()));
       }
       catch(const utf8::exception &e) {

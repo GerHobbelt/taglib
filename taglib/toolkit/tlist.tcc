@@ -74,8 +74,7 @@ public:
   }
   void clear() {
     if(autoDelete) {
-      typename std::list<TP *>::const_iterator it = list.begin();
-      for(; it != list.end(); ++it)
+      for(auto it = list.begin(); it != list.end(); ++it)
         delete *it;
     }
     list.clear();
@@ -282,7 +281,7 @@ T &List<T>::back()
 template <class T>
 T &List<T>::operator[](unsigned int i)
 {
-  Iterator it = d->list.begin();
+  auto it = d->list.begin();
   std::advance(it, i);
 
   return *it;
@@ -291,7 +290,7 @@ T &List<T>::operator[](unsigned int i)
 template <class T>
 const T &List<T>::operator[](unsigned int i) const
 {
-  ConstIterator it = d->list.begin();
+  auto it = d->list.begin();
   std::advance(it, i);
 
   return *it;

@@ -24,12 +24,12 @@
 
 #include <iostream>
 #include <iomanip>
-#include <string.h>
+#include <cstring>
 
-#include <stdio.h>
+#include <cstdio>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <stdlib.h>
+#include <cstdlib>
 
 #include <tlist.h>
 #include <fileref.h>
@@ -79,14 +79,14 @@ static void checkForRejectedProperties(const TagLib::PropertyMap &tags)
 { // stolen from tagreader.cpp
   if(tags.size() > 0) {
     unsigned int longest = 0;
-    for(TagLib::PropertyMap::ConstIterator i = tags.begin(); i != tags.end(); ++i) {
+    for(auto i = tags.begin(); i != tags.end(); ++i) {
       if(i->first.size() > longest) {
         longest = i->first.size();
       }
     }
     cout << "-- rejected TAGs (properties) --" << endl;
-    for(TagLib::PropertyMap::ConstIterator i = tags.begin(); i != tags.end(); ++i) {
-      for(TagLib::StringList::ConstIterator j = i->second.begin(); j != i->second.end(); ++j) {
+    for(auto i = tags.begin(); i != tags.end(); ++i) {
+      for(auto j = i->second.begin(); j != i->second.end(); ++j) {
         cout << left << std::setw(longest) << i->first << " - " << '"' << *j << '"' << endl;
       }
     }

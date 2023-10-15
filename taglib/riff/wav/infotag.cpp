@@ -48,13 +48,9 @@ public:
 // StringHandler implementation
 ////////////////////////////////////////////////////////////////////////////////
 
-StringHandler::StringHandler()
-{
-}
+StringHandler::StringHandler() = default;
 
-StringHandler::~StringHandler()
-{
-}
+StringHandler::~StringHandler() = default;
 
 String RIFF::Info::StringHandler::parse(const ByteVector &data) const
 {
@@ -201,8 +197,7 @@ ByteVector RIFF::Info::Tag::render() const
 {
   ByteVector data("INFO");
 
-  FieldListMap::ConstIterator it = d->fieldListMap.cbegin();
-  for(; it != d->fieldListMap.cend(); ++it) {
+  for(auto it = d->fieldListMap.cbegin(); it != d->fieldListMap.cend(); ++it) {
     ByteVector text = stringHandler->render(it->second);
     if(text.isEmpty())
       continue;
