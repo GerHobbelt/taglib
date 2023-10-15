@@ -173,7 +173,6 @@ int main(int argc, const char **argv)
         }
         default:
           return usage();
-          break;
         }
       }
     }
