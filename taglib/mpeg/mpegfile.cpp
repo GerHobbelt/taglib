@@ -51,14 +51,6 @@ public:
   {
   }
 
-  ~FilePrivate()
-  {
-    delete properties;
-  }
-
-  FilePrivate(const FilePrivate &) = delete;
-  FilePrivate &operator=(const FilePrivate &) = delete;
-
   const ID3v2::FrameFactory *ID3v2FrameFactory;
 
   offset_t ID3v2Location { -1 };
@@ -71,7 +63,7 @@ public:
 
   TagUnion tag;
 
-  Properties *properties { nullptr };
+  std::unique_ptr<Properties> properties;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -130,30 +122,30 @@ bool MPEG::File::isSupported(IOStream *stream)
 // public members
 ////////////////////////////////////////////////////////////////////////////////
 
-MPEG::File::File(FileName file, bool readProperties, Properties::ReadStyle) :
+MPEG::File::File(FileName file, bool readProperties, Properties::ReadStyle readStyle) :
   TagLib::File(file),
   d(std::make_unique<FilePrivate>())
 {
   if(isOpen())
-    read(readProperties);
+    read(readProperties, readStyle);
 }
 
 MPEG::File::File(FileName file, ID3v2::FrameFactory *frameFactory,
-                 bool readProperties, Properties::ReadStyle) :
+                 bool readProperties, Properties::ReadStyle readStyle) :
   TagLib::File(file),
   d(std::make_unique<FilePrivate>(frameFactory))
 {
   if(isOpen())
-    read(readProperties);
+    read(readProperties, readStyle);
 }
 
 MPEG::File::File(IOStream *stream, ID3v2::FrameFactory *frameFactory,
-                 bool readProperties, Properties::ReadStyle) :
+                 bool readProperties, Properties::ReadStyle readStyle) :
   TagLib::File(stream),
   d(std::make_unique<FilePrivate>(frameFactory))
 {
   if(isOpen())
-    read(readProperties);
+    read(readProperties, readStyle);
 }
 
 MPEG::File::~File() = default;
@@ -185,7 +177,7 @@ PropertyMap MPEG::File::setProperties(const PropertyMap &properties)
 
 MPEG::Properties *MPEG::File::audioProperties() const
 {
-  return d->properties;
+  return d->properties.get();
 }
 
 bool MPEG::File::save()
@@ -458,11 +450,11 @@ bool MPEG::File::hasAPETag() const
 // private members
 ////////////////////////////////////////////////////////////////////////////////
 
-void MPEG::File::read(bool readProperties)
+void MPEG::File::read(bool readProperties, Properties::ReadStyle readStyle)
 {
   // Look for an ID3v2 tag
 
-  d->ID3v2Location = findID3v2();
+  d->ID3v2Location = findID3v2(readStyle);
 
   if(d->ID3v2Location >= 0) {
     d->tag.set(ID3v2Index, new ID3v2::Tag(this, d->ID3v2Location, d->ID3v2FrameFactory));
@@ -487,7 +479,7 @@ void MPEG::File::read(bool readProperties)
   }
 
   if(readProperties)
-    d->properties = new Properties(this);
+    d->properties = std::make_unique<Properties>(this);
 
   // Make sure that we have our default tag types available.
 
@@ -495,7 +487,7 @@ void MPEG::File::read(bool readProperties)
   ID3v1Tag(true);
 }
 
-offset_t MPEG::File::findID3v2()
+offset_t MPEG::File::findID3v2(Properties::ReadStyle readStyle)
 {
   if(!isValid())
     return -1;
@@ -507,6 +499,9 @@ offset_t MPEG::File::findID3v2()
   seek(0);
   if(readBlock(headerID.size()) == headerID)
     return 0;
+
+  if(readStyle == Properties::Fast)
+    return -1;
 
   const Header firstHeader(this, 0, true);
   if(firstHeader.isValid())
