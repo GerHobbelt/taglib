@@ -77,7 +77,7 @@ namespace
   {
 #ifdef _WIN32
     if(::wcslen(fileName) == 0)
-      return 0;
+      return nullptr;
 #else
     if(::strlen(fileName) == 0)
       return nullptr;
@@ -302,10 +302,7 @@ namespace
 class FileRef::FileRefPrivate
 {
 public:
-  FileRefPrivate() :
-    file(nullptr),
-    stream(nullptr) {}
-
+  FileRefPrivate() = default;
   ~FileRefPrivate()
   {
     delete file;
@@ -315,8 +312,8 @@ public:
   FileRefPrivate(const FileRefPrivate &) = delete;
   FileRefPrivate &operator=(const FileRefPrivate &) = delete;
 
-  File     *file;
-  IOStream *stream;
+  File *file { nullptr };
+  IOStream *stream { nullptr };
 };
 
 ////////////////////////////////////////////////////////////////////////////////
