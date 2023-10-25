@@ -40,12 +40,14 @@ set(tag_HDRS
   toolkit/tstringlist.h
   toolkit/tbytevector.h
   toolkit/tbytevectorlist.h
+  toolkit/tvariant.h
   toolkit/tbytevectorstream.h
   toolkit/tiostream.h
   toolkit/tfile.h
   toolkit/tfilestream.h
   toolkit/tmap.h
   toolkit/tmap.tcc
+  toolkit/tpicturetype.h
   toolkit/tpropertymap.h
   toolkit/tdebuglistener.h
   toolkit/tversionnumber.h
@@ -300,11 +302,13 @@ set(toolkit_SRCS
   toolkit/tstringlist.cpp
   toolkit/tbytevector.cpp
   toolkit/tbytevectorlist.cpp
+  toolkit/tvariant.cpp
   toolkit/tbytevectorstream.cpp
   toolkit/tiostream.cpp
   toolkit/tfile.cpp
   toolkit/tfilestream.cpp
   toolkit/tdebug.cpp
+  toolkit/tpicturetype.cpp
   toolkit/tpropertymap.cpp
   toolkit/tdebuglistener.cpp
   toolkit/tzlib.cpp
