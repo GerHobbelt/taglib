@@ -127,10 +127,9 @@ int main(int argc, const char **argv)
       TagLib::String value = argv[i + 1];
       int numArgsConsumed = 2;
 
-      TagLib::List<TagLib::FileRef>::ConstIterator it;
-      for(it = fileList.cbegin(); it != fileList.cend(); ++it) {
+      for(auto &f : fileList) {
 
-        TagLib::Tag *t = (*it).tag();
+        TagLib::Tag *t = f.tag();
 
         switch (field) {
         case 't':
@@ -157,7 +156,7 @@ int main(int argc, const char **argv)
         case 'R':
         case 'I':
           if(i + 2 < argc) {
-            TagLib::PropertyMap map = (*it).file()->properties ();
+            TagLib::PropertyMap map = f.properties();
             if(field == 'R') {
               map.replace(value, TagLib::String(argv[i + 2]));
             }
@@ -165,16 +164,16 @@ int main(int argc, const char **argv)
               map.insert(value, TagLib::String(argv[i + 2]));
             }
             numArgsConsumed = 3;
-            checkForRejectedProperties((*it).file()->setProperties(map));
+            checkForRejectedProperties(f.setProperties(map));
           }
           else {
             return usage();
           }
           break;
         case 'D': {
-          TagLib::PropertyMap map = (*it).file()->properties();
+          TagLib::PropertyMap map = f.properties();
           map.erase(value);
-          checkForRejectedProperties((*it).file()->setProperties(map));
+          checkForRejectedProperties(f.setProperties(map));
           break;
         }
         case 'p': {
@@ -195,7 +194,7 @@ int main(int argc, const char **argv)
               TagLib::String mimeType = data.startsWith("\x89PNG\x0d\x0a\x1a\x0a")
                 ? "image/png" : "image/jpeg";
               TagLib::String description(argv[i + 2]);
-              it->file()->setComplexProperties("PICTURE", {
+              f.setComplexProperties("PICTURE", {
                 {
                   {"data", data},
                   {"pictureType", "Front Cover"},
@@ -206,7 +205,7 @@ int main(int argc, const char **argv)
             }
             else {
               // empty value, remove pictures
-              it->file()->setComplexProperties("PICTURE", {});
+              f.setComplexProperties("PICTURE", {});
             }
           }
           else {
@@ -224,9 +223,8 @@ int main(int argc, const char **argv)
       return usage();
   }
 
-  TagLib::List<TagLib::FileRef>::ConstIterator it;
-  for(it = fileList.cbegin(); it != fileList.cend(); ++it)
-    (*it).file()->save();
+  for(auto &f : fileList)
+    f.save();
 
   return 0;
 }
