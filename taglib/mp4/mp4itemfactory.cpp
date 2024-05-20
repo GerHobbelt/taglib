@@ -57,7 +57,7 @@ ItemFactory *ItemFactory::instance()
 std::pair<String, Item> ItemFactory::parseItem(
   const Atom *atom, const ByteVector &data) const
 {
-  auto handlerType = handlerTypeForName(atom->name);
+  auto handlerType = handlerTypeForName(atom->name());
   switch(handlerType) {
   case ItemHandlerType::Unknown:
     break;
@@ -87,7 +87,7 @@ std::pair<String, Item> ItemFactory::parseItem(
   case ItemHandlerType::Text:
     return parseText(atom, data);
   }
-  return {atom->name, Item()};
+  return {atom->name(), Item()};
 }
 
 ByteVector ItemFactory::renderItem(
@@ -211,7 +211,7 @@ std::pair<String, StringList> ItemFactory::itemToProperty(
     case ItemHandlerType::UInt:
       return {key, String::number(item.toUInt())};
     case ItemHandlerType::LongLong:
-      return {key, String::number(item.toLongLong())};
+      return {key, String::fromLongLong(item.toLongLong())};
     case ItemHandlerType::Byte:
       return {key, String::number(item.toByte())};
     case ItemHandlerType::Bool:
@@ -364,7 +364,8 @@ Map<ByteVector, String> ItemFactory::namePropertyMap() const
     {"----:com.apple.iTunes:MusicBrainz Album Status", "RELEASESTATUS"},
     {"----:com.apple.iTunes:MusicBrainz Album Type", "RELEASETYPE"},
     {"----:com.apple.iTunes:ARTISTS", "ARTISTS"},
-    {"----:com.apple.iTunes:originaldate", "ORIGINALDATE"},
+    {"----:com.apple.iTunes:ORIGINALDATE", "ORIGINALDATE"},
+    {"----:com.apple.iTunes:RELEASEDATE", "RELEASEDATE"},
     {"----:com.apple.iTunes:ASIN", "ASIN"},
     {"----:com.apple.iTunes:LABEL", "LABEL"},
     {"----:com.apple.iTunes:LYRICIST", "LYRICIST"},
@@ -448,7 +449,7 @@ std::pair<String, Item> ItemFactory::parseInt(
 {
   ByteVectorList data = parseData(atom, bytes);
   return {
-    atom->name,
+    atom->name(),
     !data.isEmpty() ? Item(static_cast<int>(data[0].toShort())) : Item()
   };
 }
@@ -460,12 +461,12 @@ std::pair<String, Item> ItemFactory::parseTextOrInt(
   if(!data.isEmpty()) {
     AtomData val = data[0];
     return {
-      atom->name,
+      atom->name(),
        val.type == TypeUTF8 ? Item(StringList(String(val.data, String::UTF8)))
                             : Item(static_cast<int>(val.data.toShort()))
     };
   }
-  return {atom->name, Item()};
+  return {atom->name(), Item()};
 }
 
 std::pair<String, Item> ItemFactory::parseUInt(
@@ -473,7 +474,7 @@ std::pair<String, Item> ItemFactory::parseUInt(
 {
   ByteVectorList data = parseData(atom, bytes);
   return {
-    atom->name,
+    atom->name(),
     !data.isEmpty() ? Item(data[0].toUInt()) : Item()
   };
 }
@@ -483,7 +484,7 @@ std::pair<String, Item> ItemFactory::parseLongLong(
 {
   ByteVectorList data = parseData(atom, bytes);
   return {
-    atom->name,
+    atom->name(),
     !data.isEmpty() ?Item (data[0].toLongLong()) : Item()
   };
 }
@@ -493,7 +494,7 @@ std::pair<String, Item> ItemFactory::parseByte(
 {
   ByteVectorList data = parseData(atom, bytes);
   return {
-    atom->name,
+    atom->name(),
     !data.isEmpty() ? Item(static_cast<unsigned char>(data[0].at(0))) : Item()
   };
 }
@@ -521,9 +522,9 @@ std::pair<String, Item> ItemFactory::parseIntPair(
   if(!data.isEmpty()) {
     const int a = data[0].toShort(2U);
     const int b = data[0].toShort(4U);
-    return {atom->name, Item(a, b)};
+    return {atom->name(), Item(a, b)};
   }
-  return {atom->name, Item()};
+  return {atom->name(), Item()};
 }
 
 std::pair<String, Item> ItemFactory::parseBool(
@@ -532,9 +533,9 @@ std::pair<String, Item> ItemFactory::parseBool(
   ByteVectorList data = parseData(atom, bytes);
   if(!data.isEmpty()) {
     bool value = !data[0].isEmpty() && data[0][0] != '\0';
-    return {atom->name, Item(value)};
+    return {atom->name(), Item(value)};
   }
-  return {atom->name, Item()};
+  return {atom->name(), Item()};
 }
 
 std::pair<String, Item> ItemFactory::parseText(
@@ -546,9 +547,9 @@ std::pair<String, Item> ItemFactory::parseText(
     for(const auto &byte : data) {
       value.append(String(byte, String::UTF8));
     }
-    return {atom->name, Item(value)};
+    return {atom->name(), Item(value)};
   }
-  return {atom->name, Item()};
+  return {atom->name(), Item()};
 }
 
 std::pair<String, Item> ItemFactory::parseFreeForm(
@@ -590,7 +591,7 @@ std::pair<String, Item> ItemFactory::parseFreeForm(
       return {name, item};
     }
   }
-  return {atom->name, Item()};
+  return {atom->name(), Item()};
 }
 
 std::pair<String, Item> ItemFactory::parseCovr(
@@ -622,7 +623,7 @@ std::pair<String, Item> ItemFactory::parseCovr(
     pos += length;
   }
   return {
-    atom->name,
+    atom->name(),
     !value.isEmpty() ? Item(value) : Item()
   };
 }

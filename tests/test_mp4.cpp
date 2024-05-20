@@ -238,8 +238,8 @@ public:
 
       MP4::Atoms a(&f);
       MP4::Atom *stco = a.find("moov")->findall("stco", true)[0];
-      f.seek(stco->offset + 12);
-      ByteVector data = f.readBlock(stco->length - 12);
+      f.seek(stco->offset() + 12);
+      ByteVector data = f.readBlock(stco->length() - 12);
       unsigned int count = data.mid(0, 4).toUInt();
       int pos = 4;
       while (count--) {
@@ -257,8 +257,8 @@ public:
 
       MP4::Atoms a(&f);
       MP4::Atom *stco = a.find("moov")->findall("stco", true)[0];
-      f.seek(stco->offset + 12);
-      ByteVector data = f.readBlock(stco->length - 12);
+      f.seek(stco->offset() + 12);
+      ByteVector data = f.readBlock(stco->length() - 12);
       unsigned int count = data.mid(0, 4).toUInt();
       int pos = 4, i = 0;
       while (count--) {
@@ -323,8 +323,8 @@ public:
       CPPUNIT_ASSERT_EQUAL(true, f.tag()->itemMap()["cpil"].toBool());
 
       MP4::Atoms atoms(&f);
-      MP4::Atom *moov = atoms.atoms[0];
-      CPPUNIT_ASSERT_EQUAL(static_cast<offset_t>(77), moov->length);
+      MP4::Atom *moov = atoms.atoms()[0];
+      CPPUNIT_ASSERT_EQUAL(static_cast<offset_t>(77), moov->length());
 
       f.tag()->setItem("pgap", true);
       f.save();
@@ -335,9 +335,9 @@ public:
       CPPUNIT_ASSERT_EQUAL(true, f.tag()->item("pgap").toBool());
 
       MP4::Atoms atoms(&f);
-      MP4::Atom *moov = atoms.atoms[0];
+      MP4::Atom *moov = atoms.atoms()[0];
       // original size + 'pgap' size + padding
-      CPPUNIT_ASSERT_EQUAL(static_cast<offset_t>(77 + 25 + 974), moov->length);
+      CPPUNIT_ASSERT_EQUAL(static_cast<offset_t>(77 + 25 + 974), moov->length());
     }
   }
 
@@ -602,10 +602,7 @@ public:
   void testFuzzedFile()
   {
     MP4::File f(TEST_FILE_PATH_C("infloop.m4a"));
-    // The file has an invalid atom length of 2775 in the last atom
-    // ("free", offset 0xc521, 00000ad7 66726565), whereas the remaining file
-    // length is 2727 bytes, therefore the file is now considered invalid.
-    CPPUNIT_ASSERT(!f.isValid());
+    CPPUNIT_ASSERT(f.isValid());
   }
 
   void testRepeatedSave()
@@ -714,7 +711,7 @@ public:
       CPPUNIT_ASSERT(f.tag()->isEmpty());
       CPPUNIT_ASSERT(fileEqual(
         copy.fileName(),
-        TEST_FILE_PATH_C("no-tags.m4a")));
+        testFilePath("no-tags.m4a")));
     }
   }
 

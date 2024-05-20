@@ -310,14 +310,14 @@ List<T> &List<T>::operator=(const List<T> &) = default;
 template <class T>
 List<T> &List<T>::operator=(std::initializer_list<T> init)
 {
-  bool autoDelete = d->autoDelete;
+  bool autoDeleteEnabled = d->autoDelete;
   List(init).swap(*this);
-  setAutoDelete(autoDelete);
+  setAutoDelete(autoDeleteEnabled);
   return *this;
 }
 
 template <class T>
-void List<T>::swap(List<T> &l)
+void List<T>::swap(List<T> &l) noexcept
 {
   using std::swap;
 

@@ -33,15 +33,6 @@
 
 using namespace TagLib;
 
-namespace
-{
-  bool checkValid(const MP4::AtomList &list)
-  {
-    return std::none_of(list.begin(), list.end(),
-      [](const auto &a) { return a->length == 0 || !checkValid(a->children); });
-  }
-}  // namespace
-
 class MP4::File::FilePrivate
 {
 public:
@@ -127,7 +118,7 @@ MP4::File::read(bool readProperties)
     return;
 
   d->atoms = std::make_unique<Atoms>(this);
-  if(!checkValid(d->atoms->atoms)) {
+  if(!d->atoms->checkRootLevelAtoms()) {
     setValid(false);
     return;
   }

@@ -39,17 +39,16 @@
 int main(int argc, const char **argv)
 {
   int i;
-  int seconds;
-  int minutes;
-  TagLib_File *file;
-  TagLib_Tag *tag;
-  const TagLib_AudioProperties *properties;
-  char **propertiesMap;
-  char **complexKeys;
 
   taglib_set_strings_unicode(1);
 
   for(i = 1; i < argc; i++) {
+    TagLib_File *file;
+    TagLib_Tag *tag;
+    const TagLib_AudioProperties *properties;
+    char **propertiesMap;
+    char **complexKeys;
+
     printf("******************** \"%s\" ********************\n", argv[i]);
 
     file = taglib_file_new(argv[i]);
@@ -67,9 +66,9 @@ int main(int argc, const char **argv)
       printf("title   - \"%s\"\n", taglib_tag_title(tag));
       printf("artist  - \"%s\"\n", taglib_tag_artist(tag));
       printf("album   - \"%s\"\n", taglib_tag_album(tag));
-      printf("year    - \"%i\"\n", taglib_tag_year(tag));
+      printf("year    - \"%u\"\n", taglib_tag_year(tag));
       printf("comment - \"%s\"\n", taglib_tag_comment(tag));
-      printf("track   - \"%i\"\n", taglib_tag_track(tag));
+      printf("track   - \"%u\"\n", taglib_tag_track(tag));
       printf("genre   - \"%s\"\n", taglib_tag_genre(tag));
     }
 
@@ -101,10 +100,10 @@ int main(int argc, const char **argv)
     if(complexKeys != NULL) {
       char **keyPtr = complexKeys;
       while(*keyPtr) {
-        TagLib_Complex_Property_Attribute*** properties =
+        TagLib_Complex_Property_Attribute*** props =
           taglib_complex_property_get(file, *keyPtr);
-        if(properties != NULL) {
-          TagLib_Complex_Property_Attribute*** propPtr = properties;
+        if(props != NULL) {
+          TagLib_Complex_Property_Attribute*** propPtr = props;
           while(*propPtr) {
             TagLib_Complex_Property_Attribute** attrPtr = *propPtr;
             printf("%s:\n", *keyPtr);
@@ -158,7 +157,7 @@ int main(int argc, const char **argv)
             }
             ++propPtr;
           }
-          taglib_complex_property_free(properties);
+          taglib_complex_property_free(props);
         }
         ++keyPtr;
       }
@@ -166,8 +165,8 @@ int main(int argc, const char **argv)
     }
 
     if(properties != NULL) {
-      seconds = taglib_audioproperties_length(properties) % 60;
-      minutes = (taglib_audioproperties_length(properties) - seconds) / 60;
+      int seconds = taglib_audioproperties_length(properties) % 60;
+      int minutes = (taglib_audioproperties_length(properties) - seconds) / 60;
 
       printf("-- AUDIO --\n");
       printf("bitrate     - %i\n", taglib_audioproperties_bitrate(properties));

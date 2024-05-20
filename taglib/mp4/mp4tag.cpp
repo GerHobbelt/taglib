@@ -71,12 +71,12 @@ MP4::Tag::Tag(TagLib::File *file, MP4::Atoms *atoms,
     return;
   }
 
-  for(const auto &atom : std::as_const(ilst->children)) {
-    file->seek(atom->offset + 8);
-    ByteVector data = d->file->readBlock(atom->length - 8);
-    const auto &[name, item] = d->factory->parseItem(atom, data);
-    if (item.isValid()) {
-      addItem(name, item);
+  for(const auto &atom : ilst->children()) {
+    file->seek(atom->offset() + 8);
+    ByteVector data = d->file->readBlock(atom->length() - 8);
+    const auto &[name, itm] = d->factory->parseItem(atom, data);
+    if (itm.isValid()) {
+      addItem(name, itm);
     }
   }
 }
@@ -102,8 +102,8 @@ bool
 MP4::Tag::save()
 {
   ByteVector data;
-  for(const auto &[name, item] : std::as_const(d->items)) {
-    data.append(d->factory->renderItem(name, item));
+  for(const auto &[name, itm] : std::as_const(d->items)) {
+    data.append(d->factory->renderItem(name, itm));
   }
   data = renderAtom("ilst", data);
 
@@ -141,19 +141,19 @@ MP4::Tag::updateParents(const AtomList &path, offset_t delta, int ignore)
   std::advance(itEnd, 0 - ignore);
 
   for(auto it = path.begin(); it != itEnd; ++it) {
-    d->file->seek((*it)->offset);
+    d->file->seek((*it)->offset());
     long size = d->file->readBlock(4).toUInt();
     // 64-bit
     if (size == 1) {
       d->file->seek(4, File::Current); // Skip name
       long long longSize = d->file->readBlock(8).toLongLong();
       // Seek the offset of the 64-bit size
-      d->file->seek((*it)->offset + 8);
+      d->file->seek((*it)->offset() + 8);
       d->file->writeBlock(ByteVector::fromLongLong(longSize + delta));
     }
     // 32-bit
     else {
-      d->file->seek((*it)->offset);
+      d->file->seek((*it)->offset());
       d->file->writeBlock(ByteVector::fromUInt(static_cast<unsigned int>(size + delta)));
     }
   }
@@ -166,13 +166,13 @@ MP4::Tag::updateOffsets(offset_t delta, offset_t offset)
   if(moov) {
     const MP4::AtomList stco = moov->findall("stco", true);
     for(const auto &atom : stco) {
-      if(atom->offset > offset) {
-        atom->offset += delta;
+      if(atom->offset() > offset) {
+        atom->addToOffset(delta);
       }
-      d->file->seek(atom->offset + 12);
-      ByteVector data = d->file->readBlock(atom->length - 12);
+      d->file->seek(atom->offset() + 12);
+      ByteVector data = d->file->readBlock(atom->length() - 12);
       unsigned int count = data.toUInt();
-      d->file->seek(atom->offset + 16);
+      d->file->seek(atom->offset() + 16);
       unsigned int pos = 4;
       while(count--) {
         auto o = static_cast<offset_t>(data.toUInt(pos));
@@ -186,13 +186,13 @@ MP4::Tag::updateOffsets(offset_t delta, offset_t offset)
 
     const MP4::AtomList co64 = moov->findall("co64", true);
     for(const auto &atom : co64) {
-      if(atom->offset > offset) {
-        atom->offset += delta;
+      if(atom->offset() > offset) {
+        atom->addToOffset(delta);
       }
-      d->file->seek(atom->offset + 12);
-      ByteVector data = d->file->readBlock(atom->length - 12);
+      d->file->seek(atom->offset() + 12);
+      ByteVector data = d->file->readBlock(atom->length() - 12);
       unsigned int count = data.toUInt();
-      d->file->seek(atom->offset + 16);
+      d->file->seek(atom->offset() + 16);
       unsigned int pos = 4;
       while(count--) {
         long long o = data.toLongLong(pos);
@@ -209,18 +209,18 @@ MP4::Tag::updateOffsets(offset_t delta, offset_t offset)
   if(moof) {
     const MP4::AtomList tfhd = moof->findall("tfhd", true);
     for(const auto &atom : tfhd) {
-      if(atom->offset > offset) {
-        atom->offset += delta;
+      if(atom->offset() > offset) {
+        atom->addToOffset(delta);
       }
-      d->file->seek(atom->offset + 9);
-      ByteVector data = d->file->readBlock(atom->length - 9);
+      d->file->seek(atom->offset() + 9);
+      ByteVector data = d->file->readBlock(atom->length() - 9);
       const unsigned int flags = data.toUInt(0, 3, true);
       if(flags & 1) {
         long long o = data.toLongLong(7U);
         if(o > offset) {
           o += delta;
         }
-        d->file->seek(atom->offset + 16);
+        d->file->seek(atom->offset() + 16);
         d->file->writeBlock(ByteVector::fromLongLong(o));
       }
     }
@@ -241,7 +241,7 @@ MP4::Tag::saveNew(ByteVector data)
     data = renderAtom("udta", data);
   }
 
-  offset_t offset = path.back()->offset + 8;
+  offset_t offset = path.back()->offset() + 8;
   d->file->insert(data, offset, 0);
 
   updateParents(path, data.size());
@@ -250,7 +250,7 @@ MP4::Tag::saveNew(ByteVector data)
   // Insert the newly created atoms into the tree to keep it up-to-date.
 
   d->file->seek(offset);
-  path.back()->children.prepend(new Atom(d->file));
+  path.back()->prependChild(new Atom(d->file));
 }
 
 void
@@ -259,27 +259,27 @@ MP4::Tag::saveExisting(ByteVector data, const AtomList &path)
   auto it = path.end();
 
   MP4::Atom *ilst = *(--it);
-  offset_t offset = ilst->offset;
-  offset_t length = ilst->length;
+  offset_t offset = ilst->offset();
+  offset_t length = ilst->length();
 
   MP4::Atom *meta = *(--it);
-  auto index = meta->children.cfind(ilst);
+  auto index = meta->children().cfind(ilst);
 
   // check if there is an atom before 'ilst', and possibly use it as padding
-  if(index != meta->children.cbegin()) {
+  if(index != meta->children().cbegin()) {
     auto prevIndex = std::prev(index);
     MP4::Atom *prev = *prevIndex;
-    if(prev->name == "free") {
-      offset = prev->offset;
-      length += prev->length;
+    if(prev->name() == "free") {
+      offset = prev->offset();
+      length += prev->length();
     }
   }
   // check if there is an atom after 'ilst', and possibly use it as padding
   auto nextIndex = std::next(index);
-  if(nextIndex != meta->children.cend()) {
+  if(nextIndex != meta->children().cend()) {
     MP4::Atom *next = *nextIndex;
-    if(next->name == "free") {
-      length += next->length;
+    if(next->name() == "free") {
+      length += next->length();
     }
   }
 
@@ -304,13 +304,10 @@ MP4::Tag::saveExisting(ByteVector data, const AtomList &path)
   else {
     // Strip meta if data is empty, only the case when called from strip().
     MP4::Atom *udta = *std::prev(it);
-    AtomList &udtaChildren = udta->children;
-    auto metaIt = udtaChildren.find(meta);
-    if(metaIt != udtaChildren.end()) {
-      offset = meta->offset;
-      delta = - meta->length;
-      udtaChildren.erase(metaIt);
-      d->file->removeBlock(meta->offset, meta->length);
+    if(udta->removeChild(meta)) {
+      offset = meta->offset();
+      delta = - meta->length();
+      d->file->removeBlock(meta->offset(), meta->length());
       delete meta;
 
       if(delta) {
@@ -473,9 +470,9 @@ PropertyMap MP4::Tag::properties() const
 {
   PropertyMap props;
   for(const auto &[k, t] : std::as_const(d->items)) {
-    auto [key, value] = d->factory->itemToProperty(k.data(String::Latin1), t);
+    auto [key, val] = d->factory->itemToProperty(k.data(String::Latin1), t);
     if(!key.isEmpty()) {
-      props[key] = value;
+      props[key] = val;
     }
     else {
       props.addUnsupportedData(k);
@@ -501,9 +498,9 @@ PropertyMap MP4::Tag::setProperties(const PropertyMap &props)
 
   PropertyMap ignoredProps;
   for(const auto &[prop, val] : props) {
-    auto [name, item] = d->factory->itemFromProperty(prop, val);
-    if(item.isValid()) {
-      d->items[name] = item;
+    auto [name, itm] = d->factory->itemFromProperty(prop, val);
+    if(itm.isValid()) {
+      d->items[name] = itm;
     }
     else {
       ignoredProps.insert(prop, val);
@@ -524,7 +521,7 @@ StringList MP4::Tag::complexPropertyKeys() const
 
 List<VariantMap> MP4::Tag::complexProperties(const String &key) const
 {
-  List<VariantMap> properties;
+  List<VariantMap> props;
   const String uppercaseKey = key.upper();
   if(uppercaseKey == "PICTURE") {
     const CoverArtList pictures = d->items.value("covr").toCoverArtList();
@@ -550,10 +547,10 @@ List<VariantMap> MP4::Tag::complexProperties(const String &key) const
       VariantMap property;
       property.insert("data", picture.data());
       property.insert("mimeType", mimeType);
-      properties.append(property);
+      props.append(property);
     }
   }
-  return properties;
+  return props;
 }
 
 bool MP4::Tag::setComplexProperties(const String &key, const List<VariantMap> &value)
