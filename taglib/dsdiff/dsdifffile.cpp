@@ -48,7 +48,7 @@ namespace
     char padding;
   };
 
-  typedef std::vector<Chunk64> ChunkList;
+  using ChunkList = std::vector<Chunk64>;
 
   int chunkIndex(const ChunkList &chunks, const ByteVector &id)
   {
@@ -189,9 +189,9 @@ PropertyMap DSDIFF::File::properties() const
   return d->tag.properties();
 }
 
-void DSDIFF::File::removeUnsupportedProperties(const StringList &unsupported)
+void DSDIFF::File::removeUnsupportedProperties(const StringList &properties)
 {
-  d->tag.removeUnsupportedProperties(unsupported);
+  d->tag.removeUnsupportedProperties(properties);
 }
 
 PropertyMap DSDIFF::File::setProperties(const PropertyMap &properties)
@@ -226,7 +226,7 @@ bool DSDIFF::File::save(int tags, StripTags strip, ID3v2::Version version)
 
   // First: save ID3V2 chunk
 
-  ID3v2::Tag *id3v2Tag = ID3v2Tag();
+  const ID3v2::Tag *id3v2Tag = ID3v2Tag();
 
   if((tags & ID3v2) && id3v2Tag) {
     if(d->isID3InPropChunk) {
@@ -255,7 +255,7 @@ bool DSDIFF::File::save(int tags, StripTags strip, ID3v2::Version version)
 
   // Second: save the DIIN chunk
 
-  DSDIFF::DIIN::Tag *diinTag = DIINTag();
+  const DSDIFF::DIIN::Tag *diinTag = DIINTag();
 
   if((tags & DIIN) && diinTag) {
     if(!diinTag->title().isEmpty()) {
