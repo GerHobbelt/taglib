@@ -162,6 +162,7 @@ namespace TagLib {
 
       void setText(const String &s) override;
       String toString() const override;
+      StringList toStringList() const override;
 
       /*!
        * Returns the text encoding that will be used in rendering this frame.
@@ -276,7 +277,6 @@ namespace TagLib {
        */
       void setDescription(const String &s);
 
-      StringList fieldList() const;
       void setText(const String &text) override;
       void setText(const StringList &fields);
 
@@ -300,6 +300,16 @@ namespace TagLib {
        * in \a tag.  This returns null if no matching frames were found.
        */
       static UserTextIdentificationFrame *find(Tag *tag, const String &description);
+
+      /*!
+       * Returns an appropriate TXXX frame description for the given free-form tag key.
+       */
+      static String keyToTXXX(const String &);
+
+      /*!
+       * Returns a free-form tag name for the given ID3 frame description.
+       */
+      static String txxxToKey(const String &);
 
     private:
       UserTextIdentificationFrame(const ByteVector &data, Header *h);

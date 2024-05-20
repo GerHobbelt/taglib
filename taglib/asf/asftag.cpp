@@ -34,6 +34,18 @@
 
 using namespace TagLib;
 
+namespace
+{
+  StringList attributeListToStringList(const ASF::AttributeList &attributes)
+  {
+    StringList strs;
+    for(const auto &attribute : attributes) {
+      strs.append(attribute.toString());
+    }
+    return strs;
+  }
+}  // namespace
+
 class ASF::Tag::TagPrivate
 {
 public:
@@ -65,7 +77,8 @@ String ASF::Tag::artist() const
 String ASF::Tag::album() const
 {
   if(d->attributeListMap.contains("WM/AlbumTitle"))
-    return d->attributeListMap["WM/AlbumTitle"][0].toString();
+    return joinTagValues(
+      attributeListToStringList(d->attributeListMap.value("WM/AlbumTitle")));
   return String();
 }
 
@@ -107,7 +120,8 @@ unsigned int ASF::Tag::track() const
 String ASF::Tag::genre() const
 {
   if(d->attributeListMap.contains("WM/Genre"))
-    return d->attributeListMap["WM/Genre"][0].toString();
+    return joinTagValues(
+      attributeListToStringList(d->attributeListMap.value("WM/Genre")));
   return String();
 }
 
@@ -216,11 +230,16 @@ namespace
   constexpr std::array keyTranslation {
     std::pair("WM/AlbumTitle", "ALBUM"),
     std::pair("WM/AlbumArtist", "ALBUMARTIST"),
+    std::pair("WM/AuthorURL", "ARTISTWEBPAGE"),
     std::pair("WM/Composer", "COMPOSER"),
     std::pair("WM/Writer", "LYRICIST"),
     std::pair("WM/Conductor", "CONDUCTOR"),
     std::pair("WM/ModifiedBy", "REMIXER"),
     std::pair("WM/Year", "DATE"),
+    std::pair("WM/OriginalAlbumTitle", "ORIGINALALBUM"),
+    std::pair("WM/OriginalArtist", "ORIGINALARTIST"),
+    std::pair("WM/OriginalFilename", "ORIGINALFILENAME"),
+    std::pair("WM/OriginalLyricist", "ORIGINALLYRICIST"),
     std::pair("WM/OriginalReleaseYear", "ORIGINALDATE"),
     std::pair("WM/Producer", "PRODUCER"),
     std::pair("WM/ContentGroupDescription", "WORK"),
@@ -231,6 +250,7 @@ namespace
     std::pair("WM/Genre", "GENRE"),
     std::pair("WM/BeatsPerMinute", "BPM"),
     std::pair("WM/Mood", "MOOD"),
+    std::pair("WM/InitialKey", "INITIALKEY"),
     std::pair("WM/ISRC", "ISRC"),
     std::pair("WM/Lyrics", "LYRICS"),
     std::pair("WM/Media", "MEDIA"),
@@ -238,6 +258,7 @@ namespace
     std::pair("WM/CatalogNo", "CATALOGNUMBER"),
     std::pair("WM/Barcode", "BARCODE"),
     std::pair("WM/EncodedBy", "ENCODEDBY"),
+    std::pair("WM/EncodingSettings", "ENCODING"),
     std::pair("WM/AlbumSortOrder", "ALBUMSORT"),
     std::pair("WM/AlbumArtistSortOrder", "ALBUMARTISTSORT"),
     std::pair("WM/ArtistSortOrder", "ARTISTSORT"),
@@ -305,7 +326,7 @@ PropertyMap ASF::Tag::properties() const
       }
     }
     else {
-      props.unsupportedData().append(k);
+      props.addUnsupportedData(k);
     }
   }
   return props;

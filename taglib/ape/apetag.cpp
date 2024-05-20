@@ -103,31 +103,31 @@ ByteVector APE::Tag::fileIdentifier()
 String APE::Tag::title() const
 {
   Item value = d->itemListMap.value("TITLE");
-  return value.isEmpty() ? String() : value.values().toString();
+  return value.isEmpty() ? String() : joinTagValues(value.values());
 }
 
 String APE::Tag::artist() const
 {
   Item value = d->itemListMap.value("ARTIST");
-  return value.isEmpty() ? String() : value.values().toString();
+  return value.isEmpty() ? String() : joinTagValues(value.values());
 }
 
 String APE::Tag::album() const
 {
   Item value = d->itemListMap.value("ALBUM");
-  return value.isEmpty() ? String() : value.values().toString();
+  return value.isEmpty() ? String() : joinTagValues(value.values());
 }
 
 String APE::Tag::comment() const
 {
   Item value = d->itemListMap.value("COMMENT");
-  return value.isEmpty() ? String() : value.values().toString();
+  return value.isEmpty() ? String() : joinTagValues(value.values());
 }
 
 String APE::Tag::genre() const
 {
   Item value = d->itemListMap.value("GENRE");
-  return value.isEmpty() ? String() : value.values().toString();
+  return value.isEmpty() ? String() : joinTagValues(value.values());
 }
 
 unsigned int APE::Tag::year() const
@@ -207,7 +207,7 @@ PropertyMap APE::Tag::properties() const
     // if the item is Binary or Locator, or if the key is an invalid string,
     // add to unsupportedData
     if(item.type() != Item::Text || tagName.isEmpty()) {
-      properties.unsupportedData().append(tag);
+      properties.addUnsupportedData(tag);
     }
     else {
       // Some tags need to be handled specially
