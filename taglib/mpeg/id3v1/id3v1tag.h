@@ -38,7 +38,7 @@ namespace TagLib {
 
   namespace ID3v1 {
 
-    //! A abstraction for the string to data encoding in ID3v1 tags.
+    //! An abstraction for the string to data encoding in ID3v1 tags.
 
     /*!
      * ID3v1 should in theory always contain ISO-8859-1 (Latin1) data.  In
@@ -196,7 +196,7 @@ namespace TagLib {
        */
       void read();
       /*!
-       * Pareses the body of the tag in \a data.
+       * Parses the body of the tag in \a data.
        */
       void parse(const ByteVector &data);
 
