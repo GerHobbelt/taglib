@@ -332,9 +332,9 @@ void FrameFactory::rebuildAggregateFrames(ID3v2::Tag *tag) const
      tag->frameList("TDRC").size() == 1 &&
      tag->frameList("TDAT").size() == 1)
   {
-    TextIdentificationFrame *tdrc =
+    auto tdrc =
       dynamic_cast<TextIdentificationFrame *>(tag->frameList("TDRC").front());
-    UnknownFrame *tdat = dynamic_cast<UnknownFrame *>(tag->frameList("TDAT").front());
+    auto tdat = dynamic_cast<UnknownFrame *>(tag->frameList("TDAT").front());
 
     if(tdrc &&
        tdrc->fieldList().size() == 1 &&
@@ -346,7 +346,7 @@ void FrameFactory::rebuildAggregateFrames(ID3v2::Tag *tag) const
       if(date.length() == 4) {
         tdrc->setText(tdrc->toString() + '-' + date.substr(2, 2) + '-' + date.substr(0, 2));
         if(tag->frameList("TIME").size() == 1) {
-          UnknownFrame *timeframe = dynamic_cast<UnknownFrame *>(tag->frameList("TIME").front());
+          auto timeframe = dynamic_cast<UnknownFrame *>(tag->frameList("TIME").front());
           if(timeframe && timeframe->data().size() >= 5) {
             String time(timeframe->data().mid(1), static_cast<String::Type>(timeframe->data()[0]));
             if(time.length() == 4) {
@@ -553,7 +553,7 @@ Frame *FrameFactory::createFrameForProperty(const String &key, const StringList 
       auto frame = new TextIdentificationFrame(frameID, String::UTF8);
       frame->setText(values);
       return frame;
-    } if((frameID[0] == 'W') && (values.size() == 1)){  // URL frame (not WXXX); support only one value
+    } if(frameID[0] == 'W' && values.size() == 1){  // URL frame (not WXXX); support only one value
         auto frame = new UrlLinkFrame(frameID);
         frame->setUrl(values.front());
         return frame;

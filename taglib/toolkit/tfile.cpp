@@ -43,8 +43,6 @@
 # define W_OK 2
 #endif
 
-#include "wavpackfile.h"
-
 using namespace TagLib;
 
 class File::FilePrivate
@@ -178,7 +176,7 @@ offset_t File::find(const ByteVector &pattern, offset_t fromOffset, const ByteVe
     // (1) previous partial match
 
     if(previousPartialMatch >= 0 && static_cast<int>(bufferSize()) > previousPartialMatch) {
-      if(const int patternOffset = (bufferSize() - previousPartialMatch);
+      if(const int patternOffset = bufferSize() - previousPartialMatch;
          buffer.containsAt(pattern, 0, patternOffset)) {
         seek(originalPosition);
         return bufferOffset - bufferSize() + previousPartialMatch;
@@ -186,7 +184,7 @@ offset_t File::find(const ByteVector &pattern, offset_t fromOffset, const ByteVe
     }
 
     if(!before.isEmpty() && beforePreviousPartialMatch >= 0 && static_cast<int>(bufferSize()) > beforePreviousPartialMatch) {
-      if(const int beforeOffset = (bufferSize() - beforePreviousPartialMatch);
+      if(const int beforeOffset = bufferSize() - beforePreviousPartialMatch;
          buffer.containsAt(before, 0, beforeOffset)) {
         seek(originalPosition);
         return -1;
