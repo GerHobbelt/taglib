@@ -69,7 +69,7 @@ public:
 // public members
 ////////////////////////////////////////////////////////////////////////////////
 
-MP4::Properties::Properties(File *file, MP4::Atoms *atoms, ReadStyle style) :
+MP4::Properties::Properties(File *file, const MP4::Atoms *atoms, ReadStyle style) :
   AudioProperties(style),
   d(std::make_unique<PropertiesPrivate>())
 {
@@ -125,7 +125,7 @@ MP4::Properties::codec() const
 ////////////////////////////////////////////////////////////////////////////////
 
 void
-MP4::Properties::read(File *file, Atoms *atoms)
+MP4::Properties::read(File *file, const Atoms *atoms)
 {
   MP4::Atom *moov = atoms->find("moov");
   if(!moov) {
@@ -222,8 +222,8 @@ MP4::Properties::read(File *file, Atoms *atoms)
           pos += 3;
         }
         pos += 10;
-        const unsigned int bitrateValue = data.toUInt(pos);
-        if(bitrateValue != 0 || d->length <= 0) {
+        if(const unsigned int bitrateValue = data.toUInt(pos);
+           bitrateValue != 0 || d->length <= 0) {
           d->bitrate = static_cast<int>((bitrateValue + 500) / 1000.0 + 0.5);
         }
         else {

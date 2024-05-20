@@ -45,10 +45,10 @@ namespace
 {
   enum { FlacXiphIndex = 0, FlacID3v2Index = 1, FlacID3v1Index = 2 };
 
-  const long MinPaddingLength = 4096;
-  const long MaxPaddingLegnth = 1024 * 1024;
+  constexpr long MinPaddingLength = 4096;
+  constexpr long MaxPaddingLegnth = 1024 * 1024;
 
-  const char LastBlockFlag = '\x80';
+  constexpr char LastBlockFlag = '\x80';
 }  // namespace
 
 class FLAC::File::FilePrivate
@@ -171,8 +171,7 @@ StringList FLAC::File::complexPropertyKeys() const
 
 List<VariantMap> FLAC::File::complexProperties(const String &key) const
 {
-  const String uppercaseKey = key.upper();
-  if(uppercaseKey == "PICTURE") {
+  if(const String uppercaseKey = key.upper(); uppercaseKey == "PICTURE") {
     List<VariantMap> props;
     for(const auto &block : std::as_const(d->blocks)) {
       if(auto picture = dynamic_cast<Picture *>(block)) {
@@ -196,8 +195,7 @@ List<VariantMap> FLAC::File::complexProperties(const String &key) const
 
 bool FLAC::File::setComplexProperties(const String &key, const List<VariantMap> &value)
 {
-  const String uppercaseKey = key.upper();
-  if(uppercaseKey == "PICTURE") {
+  if(const String uppercaseKey = key.upper(); uppercaseKey == "PICTURE") {
     removePictures();
 
     for(const auto &property : value) {

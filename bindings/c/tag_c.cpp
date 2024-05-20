@@ -431,17 +431,17 @@ void _taglib_property_set(TagLib_File *file, const char* prop, const char* value
 
 }  // namespace
 
-void taglib_property_set(TagLib_File *f, const char *prop, const char *value)
+void taglib_property_set(TagLib_File *file, const char *prop, const char *value)
 {
-  _taglib_property_set(f, prop, value, false);
+  _taglib_property_set(file, prop, value, false);
 }
 
-void taglib_property_set_append(TagLib_File *f, const char *prop, const char *value)
+void taglib_property_set_append(TagLib_File *file, const char *prop, const char *value)
 {
-  _taglib_property_set(f, prop, value, true);
+  _taglib_property_set(file, prop, value, true);
 }
 
-char** taglib_property_keys(TagLib_File *file)
+char** taglib_property_keys(const TagLib_File *file)
 {
   if(file == NULL)
     return NULL;
@@ -461,7 +461,7 @@ char** taglib_property_keys(TagLib_File *file)
   return props;
 }
 
-char **taglib_property_get(TagLib_File *file, const char *prop)
+char **taglib_property_get(const TagLib_File *file, const char *prop)
 {
   if(file == NULL || prop == NULL)
     return NULL;
@@ -520,8 +520,7 @@ bool _taglib_complex_property_set(
   while(*attrPtr) {
     const TagLib_Complex_Property_Attribute *attr = *attrPtr;
     String attrKey(attr->key);
-    TagLib_Variant_Type type = attr->value.type;
-    switch(type) {
+    switch(attr->value.type) {
     case TagLib_Variant_Void:
       map.insert(attrKey, Variant());
       break;
@@ -585,7 +584,7 @@ BOOL taglib_complex_property_set_append(
   return _taglib_complex_property_set(file, key, value, true);
 }
 
-char** taglib_complex_property_keys(TagLib_File *file)
+char** taglib_complex_property_keys(const TagLib_File *file)
 {
   if(file == NULL) {
     return NULL;
@@ -608,7 +607,7 @@ char** taglib_complex_property_keys(TagLib_File *file)
 }
 
 TagLib_Complex_Property_Attribute*** taglib_complex_property_get(
-  TagLib_File *file, const char *key)
+  const TagLib_File *file, const char *key)
 {
   if(file == NULL || key == NULL) {
     return NULL;
@@ -727,8 +726,7 @@ void taglib_picture_from_complex_property(
     TagLib_Complex_Property_Attribute** attrPtr = *propPtr;
     while(*attrPtr) {
       TagLib_Complex_Property_Attribute *attr = *attrPtr;
-      TagLib_Variant_Type type = attr->value.type;
-      switch(type) {
+      switch(attr->value.type) {
       case TagLib_Variant_String:
         if(strcmp("mimeType", attr->key) == 0) {
           picture->mimeType = attr->value.value.stringValue;
@@ -779,8 +777,7 @@ void taglib_complex_property_free(
     TagLib_Complex_Property_Attribute** attrPtr = *propPtr;
     while(*attrPtr) {
       TagLib_Complex_Property_Attribute *attr = *attrPtr;
-      TagLib_Variant_Type type = attr->value.type;
-      switch(type) {
+      switch(attr->value.type) {
       case TagLib_Variant_String:
         free(attr->value.value.stringValue);
         break;

@@ -48,8 +48,7 @@ int findChar(
   const TIterator dataBegin, const TIterator dataEnd,
   char c, unsigned int offset, int byteAlign)
 {
-  const size_t dataSize = dataEnd - dataBegin;
-  if(offset + 1 > dataSize)
+  if(const size_t dataSize = dataEnd - dataBegin; offset + 1 > dataSize)
     return -1;
 
   // n % 0 is invalid
@@ -149,9 +148,8 @@ template <class T>
 ByteVector fromNumber(T value, bool mostSignificantByteFirst)
 {
   const bool isBigEndian = (Utils::systemByteOrder() == Utils::BigEndian);
-  const bool swap = (mostSignificantByteFirst != isBigEndian);
 
-  if(swap)
+  if(mostSignificantByteFirst != isBigEndian)
     value = Utils::byteSwap(value);
 
   return ByteVector(reinterpret_cast<const char *>(&value), sizeof(T));
@@ -782,8 +780,8 @@ bool ByteVector::operator!=(const char *s) const
 
 bool ByteVector::operator<(const ByteVector &v) const
 {
-  const int result = ::memcmp(data(), v.data(), std::min(size(), v.size()));
-  if(result != 0)
+  if(const int result = ::memcmp(data(), v.data(), std::min(size(), v.size()));
+     result != 0)
     return result < 0;
   return size() < v.size();
 }
@@ -827,7 +825,7 @@ void ByteVector::swap(ByteVector &v) noexcept
 
 ByteVector ByteVector::toHex() const
 {
-  static const char hexTable[17] = "0123456789abcdef";
+  static constexpr char hexTable[17] = "0123456789abcdef";
 
   ByteVector encoded(size() * 2);
   char *p = encoded.data();
@@ -925,7 +923,7 @@ ByteVector ByteVector::fromBase64(const ByteVector & input)
 
 ByteVector ByteVector::toBase64() const
 {
-  static const char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+  static constexpr char alphabet[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
   if(!isEmpty()) {
     unsigned int len = size();
     ByteVector output(4 * ((len - 1) / 3 + 1)); // note roundup
