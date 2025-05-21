@@ -48,7 +48,10 @@ set(TAGLIB_INSTALL_SUFFIX "" CACHE STRING
   "Suffix added to installed files (include directory, libraries, .pc)")
 
 add_definitions(-DHAVE_CONFIG_H)
-set(TESTS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tests/")
+set(TESTS_DIR "${CMAKE_CURRENT_SOURCE_DIR}/tests/" CACHE STRING
+  "Tests directory, is path to unit test data when 'data' is appended")
+set(TESTS_TMPDIR "" CACHE STRING
+  "Directory for temporary files created during unit tests, system tmpdir is used if undefined")
 
 if(CMAKE_C_COMPILER_ID MATCHES "^(GNU|Clang|AppleClang)$")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
@@ -93,9 +96,19 @@ endif()
 # Patch version: increase it for bug fix releases.
 set(TAGLIB_SOVERSION_MAJOR 2)
 set(TAGLIB_SOVERSION_MINOR 0)
-set(TAGLIB_SOVERSION_PATCH 1)
+set(TAGLIB_SOVERSION_PATCH 2)
 
 include(ConfigureChecks.cmake)
+
+option(WITH_APE "Build with APE, MPC, WavPack" ON)
+option(WITH_ASF "Build with ASF" ON)
+option(WITH_DSF "Build with DSF" ON)
+option(WITH_MOD "Build with Tracker modules" ON)
+option(WITH_MP4 "Build with MP4" ON)
+option(WITH_RIFF "Build with AIFF, RIFF, WAV" ON)
+option(WITH_SHORTEN "Build with Shorten" ON)
+option(WITH_TRUEAUDIO "Build with TrueAudio" ON)
+option(WITH_VORBIS "Build with Vorbis, FLAC, Ogg, Opus" ON)
 
 # Determine whether zlib is installed.
 option(WITH_ZLIB "Build with ZLIB" ON)
@@ -177,6 +190,36 @@ else()
     endif()
   endif()
 endif()
+
+if(WITH_APE)
+  set(TAGLIB_WITH_APE TRUE)
+endif()
+if(WITH_ASF)
+  set(TAGLIB_WITH_ASF TRUE)
+endif()
+if(WITH_DSF)
+  set(TAGLIB_WITH_DSF TRUE)
+endif()
+if(WITH_MOD)
+  set(TAGLIB_WITH_MOD TRUE)
+endif()
+if(WITH_MP4)
+  set(TAGLIB_WITH_MP4 TRUE)
+endif()
+if(WITH_RIFF)
+  set(TAGLIB_WITH_RIFF TRUE)
+endif()
+if(WITH_SHORTEN)
+  set(TAGLIB_WITH_SHORTEN TRUE)
+endif()
+if(WITH_TRUEAUDIO)
+  set(TAGLIB_WITH_TRUEAUDIO TRUE)
+endif()
+if(WITH_VORBIS)
+  set(TAGLIB_WITH_VORBIS TRUE)
+endif()
+
+configure_file(taglib/taglib_config.h.cmake "${CMAKE_CURRENT_BINARY_DIR}/taglib_config.h")
 
 add_subdirectory(taglib)
 
