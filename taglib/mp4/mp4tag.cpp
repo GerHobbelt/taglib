@@ -74,19 +74,8 @@ MP4::Tag::Tag(TagLib::File *file, MP4::Atoms *atoms) :
             atom->name == "hdvd" || atom->name == "shwm") {
       parseBool(atom);
     }
-    else if(atom->name == "tmpo" || atom->name == "\251mvi" || atom->name == "\251mvc") {
+    else if(atom->name == "tmpo" || atom->name == "rate" || atom->name == "\251mvi" || atom->name == "\251mvc") {
       parseInt(atom);
-    }
-    else if(atom->name == "rate") {
-      AtomDataList data = parseData2(atom);
-      if(!data.isEmpty()) {
-        AtomData val = data[0];
-        if (val.type == TypeUTF8) {
-          addItem(atom->name, StringList(String(val.data, String::UTF8)));
-        } else {
-          addItem(atom->name, (int)(val.data.toShort()));
-        }
-      }
     }
     else if(atom->name == "tvsn" || atom->name == "tves" || atom->name == "cnID" ||
             atom->name == "sfID" || atom->name == "atID" || atom->name == "geID" ||
@@ -312,7 +301,7 @@ MP4::Tag::parseCovr(const MP4::Atom *atom)
     const int length = static_cast<int>(data.toUInt(pos));
     if(length < 12) {
       debug("MP4: Too short atom");
-      break;
+      break;;
     }
 
     const ByteVector name = data.mid(pos + 4, 4);
@@ -498,18 +487,8 @@ MP4::Tag::save()
             name == "shwm") {
       data.append(renderBool(name.data(String::Latin1), it->second));
     }
-    else if(name == "tmpo" || name == "\251mvi" || name == "\251mvc") {
+    else if(name == "tmpo" || name == "rate" || name == "\251mvi" || name == "\251mvc") {
       data.append(renderInt(name.data(String::Latin1), it->second));
-    }
-    else if (name == "rate") {
-      const MP4::Item& item = it->second;
-      StringList value = item.toStringList();
-      if (value.isEmpty()) {
-        data.append(renderInt(name.data(String::Latin1), item));
-      }
-      else {
-        data.append(renderText(name.data(String::Latin1), item));
-      }
     }
     else if(name == "tvsn" || name == "tves" || name == "cnID" ||
             name == "sfID" || name == "atID" || name == "geID" ||
@@ -798,63 +777,43 @@ MP4::Tag::guid() const
 void
 MP4::Tag::setTitle(const String &value)
 {
-  setTextItem("\251nam", value);
+  d->items["\251nam"] = StringList(value);
 }
 
 void
 MP4::Tag::setArtist(const String &value)
 {
-  setTextItem("\251ART", value);
+  d->items["\251ART"] = StringList(value);
 }
 
 void
 MP4::Tag::setAlbum(const String &value)
 {
-  setTextItem("\251alb", value);
+  d->items["\251alb"] = StringList(value);
 }
 
 void
 MP4::Tag::setComment(const String &value)
 {
-  setTextItem("\251cmt", value);
+  d->items["\251cmt"] = StringList(value);
 }
 
 void
 MP4::Tag::setGenre(const String &value)
 {
-  setTextItem("\251gen", value);
-}
-
-void
-MP4::Tag::setTextItem(const String &key, const String &value)
-{
-  if (!value.isEmpty()) {
-    d->items[key] = StringList(value);
-  } else {
-    d->items.erase(key);
-  }
+  d->items["\251gen"] = StringList(value);
 }
 
 void
 MP4::Tag::setYear(unsigned int value)
 {
-  if (value == 0) {
-    d->items.erase("\251day");
-  }
-  else {
-    d->items["\251day"] = StringList(String::number(value));
-  }
+  d->items["\251day"] = StringList(String::number(value));
 }
 
 void
 MP4::Tag::setTrack(unsigned int value)
 {
-  if (value == 0) {
-    d->items.erase("trkn");
-  }
-  else {
-    d->items["trkn"] = MP4::Item(value, 0);
-  }
+  d->items["trkn"] = MP4::Item(value, 0);
 }
 
 bool MP4::Tag::isEmpty() const
@@ -918,17 +877,6 @@ namespace
     { "soco", "COMPOSERSORT" },
     { "sosn", "SHOWSORT" },
     { "shwm", "SHOWWORKMOVEMENT" },
-    { "pgap", "GAPLESSPLAYBACK" },
-    { "pcst", "PODCAST" },
-    { "catg", "PODCASTCATEGORY" },
-    { "desc", "PODCASTDESC" },
-    { "egid", "PODCASTID" },
-    { "purl", "PODCASTURL" },
-    { "tves", "TVEPISODE" },
-    { "tven", "TVEPISODEID" },
-    { "tvnn", "TVNETWORK" },
-    { "tvsn", "TVSEASON" },
-    { "tvsh", "TVSHOW" },
     { "\251wrk", "WORK" },
     { "\251mvn", "MOVEMENTNAME" },
     { "\251mvi", "MOVEMENTNUMBER" },
@@ -938,13 +886,7 @@ namespace
     { "----:com.apple.iTunes:MusicBrainz Album Id", "MUSICBRAINZ_ALBUMID" },
     { "----:com.apple.iTunes:MusicBrainz Album Artist Id", "MUSICBRAINZ_ALBUMARTISTID" },
     { "----:com.apple.iTunes:MusicBrainz Release Group Id", "MUSICBRAINZ_RELEASEGROUPID" },
-    { "----:com.apple.iTunes:MusicBrainz Release Track Id", "MUSICBRAINZ_RELEASETRACKID" },
     { "----:com.apple.iTunes:MusicBrainz Work Id", "MUSICBRAINZ_WORKID" },
-    { "----:com.apple.iTunes:MusicBrainz Album Release Country", "RELEASECOUNTRY" },
-    { "----:com.apple.iTunes:MusicBrainz Album Status", "RELEASESTATUS" },
-    { "----:com.apple.iTunes:MusicBrainz Album Type", "RELEASETYPE" },
-    { "----:com.apple.iTunes:ARTISTS", "ARTISTS" },
-    { "----:com.apple.iTunes:originaldate", "ORIGINALDATE" },
     { "----:com.apple.iTunes:ASIN", "ASIN" },
     { "----:com.apple.iTunes:LABEL", "LABEL" },
     { "----:com.apple.iTunes:LYRICIST", "LYRICIST" },
@@ -992,12 +934,10 @@ PropertyMap MP4::Tag::properties() const
         }
         props[key] = value;
       }
-      else if(key == "BPM" || key == "MOVEMENTNUMBER" || key == "MOVEMENTCOUNT" ||
-              key == "TVEPISODE" || key == "TVSEASON") {
+      else if(key == "BPM" || key == "MOVEMENTNUMBER" || key == "MOVEMENTCOUNT") {
         props[key] = String::number(it->second.toInt());
       }
-      else if(key == "COMPILATION" || key == "SHOWWORKMOVEMENT" ||
-              key == "GAPLESSPLAYBACK" || key == "PODCAST") {
+      else if(key == "COMPILATION" || key == "SHOWWORKMOVEMENT") {
         props[key] = String::number(it->second.toBool());
       }
       else {
@@ -1049,15 +989,11 @@ PropertyMap MP4::Tag::setProperties(const PropertyMap &props)
           d->items[name] = MP4::Item(first, second);
         }
       }
-      else if((it->first == "BPM" || it->first == "MOVEMENTNUMBER" ||
-               it->first == "MOVEMENTCOUNT" || it->first == "TVEPISODE" ||
-               it->first == "TVSEASON") && !it->second.isEmpty()) {
+      else if((it->first == "BPM" || it->first == "MOVEMENTNUMBER" || it->first == "MOVEMENTCOUNT") && !it->second.isEmpty()) {
         int value = it->second.front().toInt();
         d->items[name] = MP4::Item(value);
       }
-      else if((it->first == "COMPILATION" || it->first == "SHOWWORKMOVEMENT" ||
-               it->first == "GAPLESSPLAYBACK" || it->first == "PODCAST") &&
-              !it->second.isEmpty()) {
+      else if((it->first == "COMPILATION" || it->first == "SHOWWORKMOVEMENT") && !it->second.isEmpty()) {
         bool value = (it->second.front().toInt() != 0);
         d->items[name] = MP4::Item(value);
       }

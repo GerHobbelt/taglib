@@ -29,8 +29,8 @@
 #include "taglib_config.h"
 
 #define TAGLIB_MAJOR_VERSION 1
-#define TAGLIB_MINOR_VERSION 12
-#define TAGLIB_PATCH_VERSION 0
+#define TAGLIB_MINOR_VERSION 11
+#define TAGLIB_PATCH_VERSION 1
 
 //JBH ==========================================================================<
 #define TAGLIB_JBH_VERSION "19.1212.0"
@@ -118,16 +118,6 @@
 #define TAGLIB_CONSTRUCT_BITSET(x) static_cast<unsigned long long>(x)
 #else
 #define TAGLIB_CONSTRUCT_BITSET(x) static_cast<unsigned long>(x)
-#endif
-
-#if __cplusplus >= 201402
-#define TAGLIB_DEPRECATED [[deprecated]]
-#elif defined(__GNUC__) || defined(__clang__)
-#define TAGLIB_DEPRECATED __attribute__((deprecated))
-#elif defined(_MSC_VER)
-#define TAGLIB_DEPRECATED __declspec(deprecated)
-#else
-#define TAGLIB_DEPRECATED
 #endif
 
 #include <string>

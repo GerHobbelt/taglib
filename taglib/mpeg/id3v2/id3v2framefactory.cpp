@@ -48,6 +48,7 @@
 #include "frames/tableofcontentsframe.h"
 #include "frames/podcastframe.h"
 
+
 using namespace TagLib;
 using namespace ID3v2;
 
@@ -60,24 +61,22 @@ namespace
 
     for(StringList::ConstIterator it = fields.begin(); it != fields.end(); ++it) {
       String s = *it;
-      int offset = 0;
-      int end = 0;
+      int end = s.find(")");
 
-      while(s.length() > offset && s[offset] == '(' &&
-            (end = s.find(")", offset + 1)) > offset) {
+      if(s.startsWith("(") && end > 0) {
         // "(12)Genre"
-        const String genreCode = s.substr(offset + 1, end - 1);
-        s = s.substr(end + 1);
+        String text = s.substr(end + 1);
         bool ok;
-        int number = genreCode.toInt(&ok);
-        if((ok && number >= 0 && number <= 255 &&
-            !(ID3v1::genre(number) == s)) ||
-           genreCode == "RX" || genreCode == "CR")
-          newfields.append(genreCode);
+        int number = s.substr(1, end - 1).toInt(&ok);
+        if(ok && number >= 0 && number <= 255 && !(ID3v1::genre(number) == text))
+          newfields.append(s.substr(1, end - 1));
+        if(!text.isEmpty())
+          newfields.append(text);
       }
-      if(!s.isEmpty())
+      else {
         // "Genre" or "12"
         newfields.append(s);
+      }
     }
 
     if(newfields.isEmpty())
@@ -94,8 +93,7 @@ public:
     defaultEncoding(String::Latin1),
     useDefaultEncoding(false) {}
 
-  //JBH: possible enum values: {Latin1, UTF16, UTF16BE, UTF8, UTF16LE}
-  String::Type defaultEncoding;
+  String::Type defaultEncoding; //JBH: possible enum values: {Latin1, UTF16, UTF16BE, UTF8, UTF16LE}
   bool useDefaultEncoding;
 
   template <class T> void setTextEncoding(T *frame)
@@ -110,10 +108,8 @@ public:
      *     Instead, Kid3 define/use its own setDefaultTextEncoding().
      */
 
-    //JBH: not called mostly.  
-    //JBH: possible enum values: {Latin1, UTF16, UTF16BE, UTF8, UTF16LE}
     if(useDefaultEncoding)
-      frame->setTextEncoding(defaultEncoding);
+      frame->setTextEncoding(defaultEncoding); //JBH: not called mostly.  //JBH: possible enum values: {Latin1, UTF16, UTF16BE, UTF8, UTF16LE}
   }
 };
 
@@ -146,19 +142,7 @@ Frame *FrameFactory::createFrame(const ByteVector &origData, Header *tagHeader, 
 #else
 Frame *FrameFactory::createFrame(const ByteVector &origData, Header *tagHeader) const
 #endif
-{
-#ifdef JBH_USE_EMBEDDED_UNICODE_ENCODER
-    return createFrame(origData, const_cast<const Header *>(tagHeader), orgCharSet, orgCharSetConfidence);
-#else
-    return createFrame(origData, const_cast<const Header *>(tagHeader));
-#endif
-}
-
-#ifdef JBH_USE_EMBEDDED_UNICODE_ENCODER
-Frame *FrameFactory::createFrame(const ByteVector &origData, const Header *tagHeader, std::string orgCharSet, float orgCharSetConfidence) const
-#else
-Frame *FrameFactory::createFrame(const ByteVector &origData, const Header *tagHeader) const
-#endif
+//JBH ==========================================================================>
 {
   /*
    *JBH: Artist: "벤", Title: "갈색 추억"   EUC-KR encoded.
@@ -232,6 +216,7 @@ Frame *FrameFactory::createFrame(const ByteVector &origData, const Header *tagHe
 
 
   ByteVector data = origData;
+
   unsigned int version = tagHeader->majorVersion();
   Frame::Header *header = new Frame::Header(data, version);
   ByteVector frameID = header->frameID();
@@ -307,8 +292,8 @@ Frame *FrameFactory::createFrame(const ByteVector &origData, const Header *tagHe
 
   // Text Identification (frames 4.2)
 
-  // Apple proprietary WFED (Podcast URL), MVNM (Movement Name), MVIN (Movement Number), GRP1 (Grouping) are in fact text frames.
-  if(frameID.startsWith("T") || frameID == "WFED" || frameID == "MVNM" || frameID == "MVIN" || frameID == "GRP1") {
+  // Apple proprietary WFED (Podcast URL), MVNM (Movement Name), MVIN (Movement Number) are in fact text frames.
+  if(frameID.startsWith("T") || frameID == "WFED" || frameID == "MVNM" || frameID == "MVIN") {
     /*
      * JBH: In the middle of creating a XXXXFrame, the client-side-defined-and-registered string handler will be called back.
      *      In AMS, TextCodecStringHandlerForID3v2::parse()@taglibfile.cpp@kid3 will be called back,
@@ -316,15 +301,14 @@ Frame *FrameFactory::createFrame(const ByteVector &origData, const Header *tagHe
      */
 
 //JBH ==========================================================================<
-    //JBH: client-side-defined string handler will be called back
 #ifdef JBH_USE_EMBEDDED_UNICODE_ENCODER
     TextIdentificationFrame *f = frameID != "TXXX"
       ? new TextIdentificationFrame(data, header, orgCharSet, orgCharSetConfidence)
-      : new UserTextIdentificationFrame(data, header); 
+      : new UserTextIdentificationFrame(data, header); //JBH: client-side-defined string handler will be called back
 #else
     TextIdentificationFrame *f = frameID != "TXXX"
       ? new TextIdentificationFrame(data, header)
-      : new UserTextIdentificationFrame(data, header);
+      : new UserTextIdentificationFrame(data, header); //JBH: client-side-defined string handler will be called back
 #endif
 //JBH ==========================================================================>
 
@@ -412,7 +396,7 @@ Frame *FrameFactory::createFrame(const ByteVector &origData, const Header *tagHe
     return f;
   }
 
-  // Synchronized lyrics/text (frames 4.9)
+  // Synchronised lyrics/text (frames 4.9)
 
   if(frameID == "SYLT") {
 //JBH ==========================================================================<
@@ -627,7 +611,6 @@ namespace
     { "WFD", "WFED" },
     { "MVN", "MVNM" },
     { "MVI", "MVIN" },
-    { "GP1", "GRP1" },
   };
   const size_t frameConversion2Size = sizeof(frameConversion2) / sizeof(frameConversion2[0]);
 

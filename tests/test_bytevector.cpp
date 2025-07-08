@@ -77,6 +77,7 @@ public:
 
     i.clear();
     CPPUNIT_ASSERT(i.isEmpty());
+    CPPUNIT_ASSERT(!i.isNull()); // deprecated, but worth it to check.
   }
 
   void testFind1()

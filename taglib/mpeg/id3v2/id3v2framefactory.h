@@ -46,7 +46,7 @@ namespace TagLib {
      *
      * Reimplementing this factory is the key to adding support for frame types
      * not directly supported by TagLib to your application.  To do so you would
-     * subclass this factory and reimplement createFrame().  Then by setting your
+     * subclass this factory reimplement createFrame().  Then by setting your
      * factory to be the default factory in ID3v2::Tag constructor you can
      * implement behavior that will allow for new ID3v2::Frame subclasses (also
      * provided by you) to be used.
@@ -74,7 +74,7 @@ namespace TagLib {
        * \deprecated Please use the method below that accepts a ID3v2::Header
        * instance in new code.
        */
-      TAGLIB_DEPRECATED Frame *createFrame(const ByteVector &data, bool synchSafeInts) const;
+      Frame *createFrame(const ByteVector &data, bool synchSafeInts) const;
 
       /*!
        * Create a frame based on \a data.  \a version should indicate the ID3v2
@@ -84,12 +84,14 @@ namespace TagLib {
        * \deprecated Please use the method below that accepts a ID3v2::Header
        * instance in new code.
        */
-      TAGLIB_DEPRECATED Frame *createFrame(const ByteVector &data, unsigned int version = 4) const;
+      Frame *createFrame(const ByteVector &data, unsigned int version = 4) const;
+
 
       /*!
-       * \deprecated
+       * Create a frame based on \a data.  \a tagHeader should be a valid
+       * ID3v2::Header instance.
        */
-      // BIC: remove
+      // BIC: make virtual
 //JBH ==========================================================================<
 #ifdef JBH_USE_EMBEDDED_UNICODE_ENCODER
       Frame *createFrame(const ByteVector &origData, Header *tagHeader, std::string orgCharSet="UNKNOWN", float orgCharSetConfidence=0.0) const;
@@ -97,16 +99,7 @@ namespace TagLib {
       Frame *createFrame(const ByteVector &data, Header *tagHeader) const;
 #endif
 //JBH ==========================================================================>
-      /*!
-       * Create a frame based on \a data.  \a tagHeader should be a valid
-       * ID3v2::Header instance.
-       */
-      // BIC: make virtual
-#ifdef JBH_USE_EMBEDDED_UNICODE_ENCODER
-      Frame *createFrame(const ByteVector &origData, const Header *tagHeader, std::string orgCharSet="UNKNOWN", float orgCharSetConfidence=0.0) const;
-#else
-      Frame *createFrame(const ByteVector &data, const Header *tagHeader) const;
-#endif
+
       /*!
        * After a tag has been read, this tries to rebuild some of them
        * information, most notably the recording date, from frames that

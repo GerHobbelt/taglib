@@ -566,7 +566,7 @@ void XM::File::read(bool)
     seek(patternHeaderLength - (4 + count) + dataSize, Current);
   }
 
-  StringList instrumentNames;
+  StringList intrumentNames;
   StringList sampleNames;
   unsigned int sumSampleCount = 0;
 
@@ -592,7 +592,7 @@ void XM::File::read(bool)
       sumSampleCount += sampleCount;
       // wouldn't know which header size to assume otherwise:
       READ_ASSERT(instrumentHeaderSize >= count + 4 && readU32L(sampleHeaderSize));
-      // skip unhandled header proportion:
+      // skip unhandeled header proportion:
       seek(instrumentHeaderSize - count - 4, Current);
 
       for(unsigned short j = 0; j < sampleCount; ++ j) {
@@ -620,7 +620,7 @@ void XM::File::read(bool)
 
         unsigned int count = sample.read(*this, sampleHeaderSize);
         READ_ASSERT(count == std::min(sampleHeaderSize, (unsigned long)sample.size()));
-        // skip unhandled header proportion:
+        // skip unhandeled header proportion:
         seek(sampleHeaderSize - count, Current);
 
         offset += sampleLength;
@@ -630,12 +630,12 @@ void XM::File::read(bool)
     else {
       offset = instrumentHeaderSize - count;
     }
-    instrumentNames.append(instrumentName);
+    intrumentNames.append(instrumentName);
     seek(offset, Current);
   }
 
   d->properties.setSampleCount(sumSampleCount);
-  String comment(instrumentNames.toString("\n"));
+  String comment(intrumentNames.toString("\n"));
   if(!sampleNames.isEmpty()) {
     comment += "\n";
     comment += sampleNames.toString("\n");

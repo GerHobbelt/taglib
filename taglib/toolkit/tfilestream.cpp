@@ -34,7 +34,7 @@
 # include <unistd.h>
 #endif
 
-//#define JBH_DEBUG_TAGLIB_OPENCLOSE
+#define JBH_DEBUG_TAGLIB_OPENCLOSE
 //#define JBH_DEBUG_FILESTREAM_OPENCLOSE
 
 using namespace TagLib;
@@ -65,11 +65,6 @@ namespace
 #else
     return CreateFileW(path.wstr().c_str(), access, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
 #endif
-  }
-
-  FileHandle openFile(const int fileDescriptor, bool readOnly)
-  {
-    return InvalidFileHandle;
   }
 
   void closeFile(FileHandle file)
@@ -121,11 +116,6 @@ namespace
 //JBH ==========================================================================>
 
     return fopen(path, readOnly ? "rb" : "rb+");
-  }
-
-  FileHandle openFile(const int fileDescriptor, bool readOnly)
-  {
-    return fdopen(fileDescriptor, readOnly ? "rb" : "rb+");
   }
 
   void closeFile(FileHandle file)
@@ -196,28 +186,13 @@ FileStream::FileStream(FileName fileName, bool openReadOnly)
     d->file = openFile(fileName, true);
 
   if(d->file == InvalidFileHandle)
+  {
 # ifdef _WIN32
     debug("Could not open file " + fileName.toString());
 # else
     debug("Could not open file " + String(static_cast<const char *>(d->name)));
 # endif
-}
-
-FileStream::FileStream(int fileDescriptor, bool openReadOnly)
-  : d(new FileStreamPrivate(""))
-{
-  // First try with read / write mode, if that fails, fall back to read only.
-
-  if(!openReadOnly)
-    d->file = openFile(fileDescriptor, false);
-
-  if(d->file != InvalidFileHandle)
-    d->readOnly = false;
-  else
-    d->file = openFile(fileDescriptor, true);
-
-  if(d->file == InvalidFileHandle)
-    debug("Could not open file using file descriptor");
+  }
 }
 
 FileStream::~FileStream()
@@ -363,7 +338,7 @@ void FileStream::insert(const ByteVector &data, unsigned long start, unsigned lo
   // Now I'll explain the steps in this ugliness:
 
   // First, make sure that we're working with a buffer that is longer than
-  // the *difference* in the tag sizes.  We want to avoid overwriting parts
+  // the *differnce* in the tag sizes.  We want to avoid overwriting parts
   // that aren't yet in memory, so this is necessary.
 
   unsigned long bufferLength = bufferSize();
@@ -379,7 +354,8 @@ void FileStream::insert(const ByteVector &data, unsigned long start, unsigned lo
   ByteVector buffer = data;
   ByteVector aboutToOverwrite(static_cast<unsigned int>(bufferLength));
 
-  while(true) {
+  while(true)
+  {
     // Seek to the current read position and read the data that we're about
     // to overwrite.  Appropriately increment the readPosition.
 
@@ -427,7 +403,8 @@ void FileStream::removeBlock(unsigned long start, unsigned long length)
 
   ByteVector buffer(static_cast<unsigned int>(bufferLength));
 
-  for(unsigned int bytesRead = -1; bytesRead != 0;) {
+  for(unsigned int bytesRead = -1; bytesRead != 0;)
+  {
     seek(readPosition);
     bytesRead = static_cast<unsigned int>(readFile(d->file, buffer));
     readPosition += bytesRead;
@@ -523,8 +500,7 @@ long FileStream::tell() const
   const LARGE_INTEGER zero = {};
   LARGE_INTEGER position;
 
-  if(SetFilePointerEx(d->file, zero, &position, FILE_CURRENT) &&
-     position.QuadPart <= LONG_MAX) {
+  if(SetFilePointerEx(d->file, zero, &position, FILE_CURRENT) && position.QuadPart <= LONG_MAX) {
     return static_cast<long>(position.QuadPart);
   }
   else {
@@ -592,10 +568,10 @@ void FileStream::truncate(long length)
 
 #else
 
-  fflush(d->file);
   const int error = ftruncate(fileno(d->file), length);
-  if(error != 0)
-    debug("FileStream::truncate() -- Couldn't truncate the file.");
+  if(error != 0) {
+    debug("FileStream::truncate() -- Coundn't truncate the file.");
+  }
 
 #endif
 }

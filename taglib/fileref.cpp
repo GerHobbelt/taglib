@@ -27,8 +27,6 @@
  *   http://www.mozilla.org/MPL/                                           *
  ***************************************************************************/
 
-#include <cstring>
-
 #include <tfile.h>
 #include <tfilestream.h>
 #include <tstring.h>
@@ -71,13 +69,6 @@ namespace
   File *detectByResolvers(FileName fileName, bool readAudioProperties,
                           AudioProperties::ReadStyle audioPropertiesStyle)
   {
-#ifdef _WIN32
-    if(::strlen(fileName) == 0 && ::wcslen(fileName) == 0)
-      return 0;
-#else
-    if(::strlen(fileName) == 0)
-      return 0;
-#endif
     ResolverList::ConstIterator it = fileTypeResolvers.begin();
     for(; it != fileTypeResolvers.end(); ++it) {
       File *file = (*it)->createFile(fileName, readAudioProperties, audioPropertiesStyle);
@@ -393,7 +384,6 @@ StringList FileRef::defaultFileExtensions()
   l.append("ogg");
   l.append("flac");
   l.append("oga");
-  l.append("opus");
   l.append("mp3");
   l.append("mpc");
   l.append("wv");
@@ -410,8 +400,6 @@ StringList FileRef::defaultFileExtensions()
   l.append("asf");
   l.append("aif");
   l.append("aiff");
-  l.append("afc");
-  l.append("aifc");
   l.append("wav");
   l.append("ape");
   l.append("mod");
@@ -499,11 +487,7 @@ void FileRef::parse(FileName fileName, bool readAudioProperties,
 void FileRef::parse(IOStream *stream, bool readAudioProperties,
                     AudioProperties::ReadStyle audioPropertiesStyle)
 {
-  // Try user-defined resolvers.
-
-  d->file = detectByResolvers(stream->name(), readAudioProperties, audioPropertiesStyle);
-  if(d->file)
-    return;
+  // User-defined resolvers won't work with a stream.
 
   // Try to resolve file types based on the file extension.
 

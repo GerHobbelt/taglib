@@ -221,14 +221,13 @@ void MPEG::Properties::read(File *file)
       debug("MPEG file: " + String(file->name(), String::UTF8));
 #endif
 //JBH ==========================================================================>
+      return;
     }
-    else
-    {
-      const Header lastHeader(file, lastFrameOffset, false);
-      const long streamLength = lastFrameOffset - firstFrameOffset + lastHeader.frameLength();
-      if (streamLength > 0)
-        d->length = static_cast<int>(streamLength * 8.0 / d->bitrate + 0.5);
-    }
+
+    const Header lastHeader(file, lastFrameOffset, false);
+    const long streamLength = lastFrameOffset - firstFrameOffset + lastHeader.frameLength();
+    if(streamLength > 0)
+      d->length = static_cast<int>(streamLength * 8.0 / d->bitrate + 0.5);
   }
 
   d->sampleRate        = firstHeader.sampleRate();

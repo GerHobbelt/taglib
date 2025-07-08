@@ -32,7 +32,6 @@
 #include <fileref.h>
 #include <tag.h>
 #include <tpropertymap.h>
-//JBH <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 #include <taglib.h>         //JBH add for TAGLIB_JBH_VERSION
 #include <tdebuglistener.h> //JBH add for StdoutListener
 
@@ -47,6 +46,7 @@
   #define CONSOLE_CHARSET "UTF-8"
 #endif
 
+//JBH <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 #ifdef JBH_USE_EMBEDDED_UNICODE_ENCODER
 #include <charsetdetector.h>
 #include <charsetconverter.h>
@@ -111,15 +111,7 @@ int main(int argc, char *argv[])
       }
 
       cout << "-- TAG (properties) --" << endl;
-#if 0
-      for(TagLib::PropertyMap::ConstIterator i = tags.begin(); i != tags.end(); ++i) {
-        for(TagLib::StringList::ConstIterator j = i->second.begin(); j != i->second.end(); ++j) {
-          cout << left << std::setw(longest) << i->first << " - " << '"' << *j << '"' << endl;
-        }
-      }
-#endif
-      //JBH ==========================================================================>
-      for (TagLib::PropertyMap::ConstIterator i = tags.begin(); i != tags.end(); ++i)
+      for(TagLib::PropertyMap::ConstIterator i = tags.begin(); i != tags.end(); ++i)
       {
         for(TagLib::StringList::ConstIterator j = i->second.begin(); j != i->second.end(); ++j)
         {
@@ -144,10 +136,9 @@ int main(int argc, char *argv[])
       }
 
       TagLib::PropertyMap map = tag->properties();
+
       cout << " Unsupported " << endl;
       cout << map.unsupportedData() << endl;
-      //JBH ==========================================================================>
-
     }
 
     if(!f.isNull() && f.audioProperties()) {

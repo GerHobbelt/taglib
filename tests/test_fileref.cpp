@@ -39,9 +39,6 @@
 #include <wavfile.h>
 #include <apefile.h>
 #include <aifffile.h>
-#include <wavpackfile.h>
-#include <opusfile.h>
-#include <xmfile.h>
 //JBH ==========================================================================<
 #include <dsffile.h>
 #include <dsdifffile.h>
@@ -86,16 +83,12 @@ class TestFileRef : public CppUnit::TestFixture
   CPPUNIT_TEST(testWav);
   CPPUNIT_TEST(testAIFF_1);
   CPPUNIT_TEST(testAIFF_2);
-  CPPUNIT_TEST(testWavPack);
-  CPPUNIT_TEST(testOpus);
 //JBH ==========================================================================<
   CPPUNIT_TEST(testDSF);
   CPPUNIT_TEST(testDSDIFF);
 //JBH ==========================================================================>
   CPPUNIT_TEST(testUnsupported);
   CPPUNIT_TEST(testCreate);
-  CPPUNIT_TEST(testAudioProperties);
-  CPPUNIT_TEST(testDefaultFileExtensions);
   CPPUNIT_TEST(testFileResolver);
   CPPUNIT_TEST_SUITE_END();
 
@@ -115,7 +108,6 @@ public:
       f.tag()->setTitle("test title");
       f.tag()->setGenre("Test!");
       f.tag()->setAlbum("albummmm");
-      f.tag()->setComment("a comment");
       f.tag()->setTrack(5);
       f.tag()->setYear(2020);
       f.save();
@@ -127,14 +119,12 @@ public:
       CPPUNIT_ASSERT_EQUAL(f.tag()->title(), String("test title"));
       CPPUNIT_ASSERT_EQUAL(f.tag()->genre(), String("Test!"));
       CPPUNIT_ASSERT_EQUAL(f.tag()->album(), String("albummmm"));
-      CPPUNIT_ASSERT_EQUAL(f.tag()->comment(), String("a comment"));
       CPPUNIT_ASSERT_EQUAL(f.tag()->track(), (unsigned int)5);
       CPPUNIT_ASSERT_EQUAL(f.tag()->year(), (unsigned int)2020);
       f.tag()->setArtist("ttest artist");
       f.tag()->setTitle("ytest title");
       f.tag()->setGenre("uTest!");
       f.tag()->setAlbum("ialbummmm");
-      f.tag()->setComment("another comment");
       f.tag()->setTrack(7);
       f.tag()->setYear(2080);
       f.save();
@@ -146,7 +136,6 @@ public:
       CPPUNIT_ASSERT_EQUAL(f.tag()->title(), String("ytest title"));
       CPPUNIT_ASSERT_EQUAL(f.tag()->genre(), String("uTest!"));
       CPPUNIT_ASSERT_EQUAL(f.tag()->album(), String("ialbummmm"));
-      CPPUNIT_ASSERT_EQUAL(f.tag()->comment(), String("another comment"));
       CPPUNIT_ASSERT_EQUAL(f.tag()->track(), (unsigned int)7);
       CPPUNIT_ASSERT_EQUAL(f.tag()->year(), (unsigned int)2080);
     }
@@ -160,14 +149,12 @@ public:
       CPPUNIT_ASSERT_EQUAL(f.tag()->title(), String("ytest title"));
       CPPUNIT_ASSERT_EQUAL(f.tag()->genre(), String("uTest!"));
       CPPUNIT_ASSERT_EQUAL(f.tag()->album(), String("ialbummmm"));
-      CPPUNIT_ASSERT_EQUAL(f.tag()->comment(), String("another comment"));
       CPPUNIT_ASSERT_EQUAL(f.tag()->track(), (unsigned int)7);
       CPPUNIT_ASSERT_EQUAL(f.tag()->year(), (unsigned int)2080);
       f.tag()->setArtist("test artist");
       f.tag()->setTitle("test title");
       f.tag()->setGenre("Test!");
       f.tag()->setAlbum("albummmm");
-      f.tag()->setComment("a comment");
       f.tag()->setTrack(5);
       f.tag()->setYear(2020);
       f.save();
@@ -183,7 +170,6 @@ public:
       CPPUNIT_ASSERT_EQUAL(f.tag()->title(), String("test title"));
       CPPUNIT_ASSERT_EQUAL(f.tag()->genre(), String("Test!"));
       CPPUNIT_ASSERT_EQUAL(f.tag()->album(), String("albummmm"));
-      CPPUNIT_ASSERT_EQUAL(f.tag()->comment(), String("a comment"));
       CPPUNIT_ASSERT_EQUAL(f.tag()->track(), (unsigned int)5);
       CPPUNIT_ASSERT_EQUAL(f.tag()->year(), (unsigned int)2020);
 
@@ -200,14 +186,12 @@ public:
       CPPUNIT_ASSERT_EQUAL(f.tag()->title(), String("test title"));
       CPPUNIT_ASSERT_EQUAL(f.tag()->genre(), String("Test!"));
       CPPUNIT_ASSERT_EQUAL(f.tag()->album(), String("albummmm"));
-      CPPUNIT_ASSERT_EQUAL(f.tag()->comment(), String("a comment"));
       CPPUNIT_ASSERT_EQUAL(f.tag()->track(), (unsigned int)5);
       CPPUNIT_ASSERT_EQUAL(f.tag()->year(), (unsigned int)2020);
       f.tag()->setArtist("ttest artist");
       f.tag()->setTitle("ytest title");
       f.tag()->setGenre("uTest!");
       f.tag()->setAlbum("ialbummmm");
-      f.tag()->setComment("another comment");
       f.tag()->setTrack(7);
       f.tag()->setYear(2080);
       f.save();
@@ -223,7 +207,6 @@ public:
       CPPUNIT_ASSERT_EQUAL(f.tag()->title(), String("ytest title"));
       CPPUNIT_ASSERT_EQUAL(f.tag()->genre(), String("uTest!"));
       CPPUNIT_ASSERT_EQUAL(f.tag()->album(), String("ialbummmm"));
-      CPPUNIT_ASSERT_EQUAL(f.tag()->comment(), String("another comment"));
       CPPUNIT_ASSERT_EQUAL(f.tag()->track(), (unsigned int)7);
       CPPUNIT_ASSERT_EQUAL(f.tag()->year(), (unsigned int)2080);
     }
@@ -326,16 +309,6 @@ public:
   }
 //JBH ==========================================================================>
 
-  void testWavPack()
-  {
-    fileRefSave<WavPack::File>("click", ".wv");
-  }
-
-  void testOpus()
-  {
-    fileRefSave<Ogg::Opus::File>("correctness_gain_silent_output", ".opus");
-  }
-
   void testUnsupported()
   {
     FileRef f1(TEST_FILE_PATH_C("no-extension"));
@@ -347,7 +320,7 @@ public:
 
   void testCreate()
   {
-    // This is deprecated. But worth it to test.
+    // This is depricated. But worth it to test.
 
     File *f = FileRef::create(TEST_FILE_PATH_C("empty_vorbis.oga"));
     CPPUNIT_ASSERT(dynamic_cast<Ogg::Vorbis::File*>(f));
@@ -356,41 +329,6 @@ public:
     f = FileRef::create(TEST_FILE_PATH_C("xing.mp3"));
     CPPUNIT_ASSERT(dynamic_cast<MPEG::File*>(f));
     delete f;
-
-    f = FileRef::create(TEST_FILE_PATH_C("test.xm"));
-    CPPUNIT_ASSERT(dynamic_cast<XM::File*>(f));
-    delete f;
-  }
-
-  void testAudioProperties()
-  {
-    FileRef f(TEST_FILE_PATH_C("xing.mp3"));
-    const AudioProperties *audioProperties = f.audioProperties();
-    CPPUNIT_ASSERT_EQUAL(2, audioProperties->lengthInSeconds());
-    CPPUNIT_ASSERT_EQUAL(2064, audioProperties->lengthInMilliseconds());
-  }
-
-  void testDefaultFileExtensions()
-  {
-    const StringList extensions = FileRef::defaultFileExtensions();
-    CPPUNIT_ASSERT(extensions.contains("mpc"));
-    CPPUNIT_ASSERT(extensions.contains("wma"));
-    CPPUNIT_ASSERT(extensions.contains("ogg"));
-    CPPUNIT_ASSERT(extensions.contains("spx"));
-    CPPUNIT_ASSERT(extensions.contains("flac"));
-    CPPUNIT_ASSERT(extensions.contains("mp3"));
-    CPPUNIT_ASSERT(extensions.contains("tta"));
-    CPPUNIT_ASSERT(extensions.contains("m4a"));
-    CPPUNIT_ASSERT(extensions.contains("3g2"));
-    CPPUNIT_ASSERT(extensions.contains("m4v"));
-    CPPUNIT_ASSERT(extensions.contains("wav"));
-    CPPUNIT_ASSERT(extensions.contains("oga"));
-    CPPUNIT_ASSERT(extensions.contains("ape"));
-    CPPUNIT_ASSERT(extensions.contains("aiff"));
-    CPPUNIT_ASSERT(extensions.contains("aifc"));
-    CPPUNIT_ASSERT(extensions.contains("wv"));
-    CPPUNIT_ASSERT(extensions.contains("opus"));
-    CPPUNIT_ASSERT(extensions.contains("xm"));
   }
 
   void testFileResolver()

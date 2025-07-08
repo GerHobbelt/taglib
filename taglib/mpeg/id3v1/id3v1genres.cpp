@@ -59,7 +59,7 @@ namespace
     L"Ambient",
     L"Trip-Hop",
     L"Vocal",
-    L"Jazz-Funk",
+    L"Jazz+Funk",
     L"Fusion",
     L"Trance",
     L"Classical",
@@ -111,16 +111,16 @@ namespace
     L"Rock & Roll",
     L"Hard Rock",
     L"Folk",
-    L"Folk Rock",
+    L"Folk/Rock",
     L"National Folk",
     L"Swing",
-    L"Fast Fusion",
-    L"Bebop",
+    L"Fusion",
+    L"Bebob",
     L"Latin",
     L"Revival",
     L"Celtic",
     L"Bluegrass",
-    L"Avant-garde",
+    L"Avantgarde",
     L"Gothic Rock",
     L"Progressive Rock",
     L"Psychedelic Rock",
@@ -155,15 +155,15 @@ namespace
     L"Drum Solo",
     L"A Cappella",
     L"Euro-House",
-    L"Dancehall",
+    L"Dance Hall",
     L"Goa",
     L"Drum & Bass",
     L"Club-House",
-    L"Hardcore Techno",
+    L"Hardcore",
     L"Terror",
     L"Indie",
-    L"Britpop",
-    L"Worldbeat",
+    L"BritPop",
+    L"Negerpunk",
     L"Polsk Punk",
     L"Beat",
     L"Christian Gangsta Rap",
@@ -259,27 +259,6 @@ int ID3v1::genreIndex(const String &name)
   for(int i = 0; i < genresSize; ++i) {
     if(name == genres[i])
       return i;
-  }
-
-  // If the name was not found, try the names which have been changed
-  static const struct {
-    const wchar_t *genre;
-    int code;
-  } fixUpGenres[] = {
-    { L"Jazz+Funk", 29 },
-    { L"Folk/Rock", 81 },
-    { L"Bebob", 85 },
-    { L"Avantgarde", 90 },
-    { L"Dance Hall", 125 },
-    { L"Hardcore", 129 },
-    { L"BritPop", 132 },
-    { L"Negerpunk", 133 }
-  };
-  static const int fixUpGenresSize =
-      sizeof(fixUpGenres) / sizeof(fixUpGenres[0]);
-  for(int i = 0; i < fixUpGenresSize; ++i) {
-    if(name == fixUpGenres[i].genre)
-      return fixUpGenres[i].code;
   }
 
   return 255;

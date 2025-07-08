@@ -48,7 +48,7 @@ namespace TagLib {
      * split between a collection of frames (which are in turn split into fields
      * (Structure, <a href="id3v2-structure.html#4">4</a>)
      * (<a href="id3v2-frames.html">Frames</a>).  This class provides an API for
-     * gathering information about and modifying ID3v2 frames.  Functionality
+     * gathering information about and modifying ID3v2 frames.  Funtionallity
      * specific to a given frame type is handed in one of the many subclasses.
      */
 
@@ -90,15 +90,14 @@ namespace TagLib {
        * non-binary compatible release this will be made into a non-static
        * member that checks the internal ID3v2 version.
        */
-      static unsigned int headerSize(); // BIC: make non-static
+      static unsigned int headerSize(); // BIC: remove and make non-static
 
       /*!
        * Returns the size of the frame header for the given ID3v2 version.
        *
        * \deprecated Please see the explanation above.
        */
-      // BIC: remove
-      static unsigned int headerSize(unsigned int version);
+      static unsigned int headerSize(unsigned int version); // BIC: remove and make non-static
 
       /*!
        * Sets the data that will be used as the frame.  Since the length is not
@@ -232,7 +231,7 @@ namespace TagLib {
        * This is useful for reading strings sequentially.
        */
       String readStringField(const ByteVector &data, String::Type encoding,
-                             int *position = 0);
+                             int *positon = 0);
 
       /*!
        * Checks a the list of string values to see if they can be used with the
@@ -284,7 +283,7 @@ namespace TagLib {
 
 
       /*!
-       * Parses the contents of this frame as PropertyMap. If that fails, the returned
+       * Parses the contents of this frame as PropertyMap. If that fails, the returend
        * PropertyMap will be empty, and its unsupportedData() will contain this frame's
        * ID.
        * BIC: Will be a virtual function in future releases.
@@ -363,7 +362,7 @@ namespace TagLib {
        * \deprecated Please use the constructor below that accepts a version
        * number.
        */
-      TAGLIB_DEPRECATED Header(const ByteVector &data, bool synchSafeInts);
+      Header(const ByteVector &data, bool synchSafeInts);
 
       /*!
        * Construct a Frame Header based on \a data.  \a data must at least
@@ -385,7 +384,7 @@ namespace TagLib {
        * \deprecated Please use the version below that accepts an ID3v2 version
        * number.
        */
-      TAGLIB_DEPRECATED void setData(const ByteVector &data, bool synchSafeInts);
+      void setData(const ByteVector &data, bool synchSafeInts);
 
       /*!
        * Sets the data for the Header.  \a version should indicate the ID3v2
@@ -440,7 +439,6 @@ namespace TagLib {
        * removed in the next binary incompatible release (2.0) and will be
        * replaced with a non-static method that checks the frame version.
        */
-      // BIC: make non-static
       static unsigned int size();
 
       /*!
@@ -449,7 +447,6 @@ namespace TagLib {
        *
        * \deprecated Please see the explanation in the version above.
        */
-      // BIC: remove
       static unsigned int size(unsigned int version);
 
       /*!
@@ -533,7 +530,7 @@ namespace TagLib {
       /*!
        * \deprecated
        */
-      TAGLIB_DEPRECATED bool frameAlterPreservation() const;
+      bool frameAlterPreservation() const;
 
     private:
       Header(const Header &);

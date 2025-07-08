@@ -318,70 +318,6 @@ void RIFF::File::removeChunk(const ByteVector &name)
 
 void RIFF::File::read()
 {
-// Original  before JBH update
-#if 0
-  const bool bigEndian = (d->endianness == BigEndian);
-
-  long offset = tell();
-
-  offset += 4;
-  d->sizeOffset = offset;
-
-  seek(offset);
-  d->size = readBlock(4).toUInt(bigEndian);
-
-  offset += 8;
-
-  // + 8: chunk header at least, fix for additional junk bytes
-  while(offset + 8 <= length()) {
-
-    seek(offset);
-    const ByteVector   chunkName = readBlock(4);
-    const unsigned int chunkSize = readBlock(4).toUInt(bigEndian);
-
-    if(!isValidChunkName(chunkName)) {
-      debug("RIFF::File::read() -- Chunk '" + chunkName + "' has invalid ID");
-      break;
-    }
-
-    if(static_cast<long long>(offset) + 8 + chunkSize > length()) {
-      debug("RIFF::File::read() -- Chunk '" + chunkName + "' has invalid size (larger than the file size)");
-      break;
-    }
-
-    Chunk chunk;
-    chunk.name    = chunkName;
-    chunk.size    = chunkSize;
-    chunk.offset  = offset + 8;
-    chunk.padding = 0;
-
-    offset = chunk.offset + chunk.size;
-
-    // Check padding
-
-    if(offset & 1) {
-      seek(offset);
-      const ByteVector iByte = readBlock(1);
-      if(iByte.size() == 1) {
-        bool skipPadding = iByte[0] == '\0';
-        if(!skipPadding) {
-          // Padding byte is not zero, check if it is good to ignore it
-          const ByteVector fourCcAfterPadding = readBlock(4);
-          if(isValidChunkName(fourCcAfterPadding)) {
-            // Use the padding, it is followed by a valid chunk name.
-            skipPadding = true;
-          }
-        }
-        if(skipPadding) {
-          chunk.padding = 1;
-          offset++;
-        }
-      }
-    }
-
-    d->chunks.push_back(chunk);
-  }
-#else
   /*
    * JBH NOTE: This RIFF::read() reads just the chunk infos (chunk name, size, offset) and constructs chunk blocks.
    *           The actual "parsing" of each chunk block will be done either in wavfile.cpp or aifffile.cpp.
@@ -586,8 +522,7 @@ void RIFF::File::read()
   offset += 4; //JBH NOTE: skip "type" block, let offset point to "size" block.
   d->sizeOffset = offset;
 
-  //JBH NOTE: advance the seek point forcefully to "size" block, without reading the first (4 bytes) "type" block (d->type = readBlock(4))
-  seek(offset);
+  seek(offset); //JBH NOTE: advance the seek point forcefully to "size" block, without reading the first (4 bytes) "type" block (d->type = readBlock(4))
   d->size = readBlock(4).toUInt(bigEndian);
 
   offset += 8; //JBH NOTE: we are skipping here reading the "format" (4 bytes) block.
@@ -871,7 +806,6 @@ void RIFF::File::read()
 //JBH ==========================================================================>
 
   } //end of "while-loop"
-#endif /// JBH update
 }
 
 void RIFF::File::writeChunk(const ByteVector &name, const ByteVector &data,

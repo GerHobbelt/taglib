@@ -58,7 +58,6 @@ class TestMPEG : public CppUnit::TestFixture
   CPPUNIT_TEST(testFuzzedFile);
   CPPUNIT_TEST(testFrameOffset);
   CPPUNIT_TEST(testStripAndProperties);
-  CPPUNIT_TEST(testProperties);
   CPPUNIT_TEST(testRepeatedSave1);
   CPPUNIT_TEST(testRepeatedSave2);
   CPPUNIT_TEST(testRepeatedSave3);
@@ -74,6 +73,7 @@ public:
   {
     MPEG::File f(TEST_FILE_PATH_C("lame_cbr.mp3"));
     CPPUNIT_ASSERT(f.audioProperties());
+    CPPUNIT_ASSERT_EQUAL(1887, f.audioProperties()->length());
     CPPUNIT_ASSERT_EQUAL(1887, f.audioProperties()->lengthInSeconds());
     CPPUNIT_ASSERT_EQUAL(1887164, f.audioProperties()->lengthInMilliseconds());
     CPPUNIT_ASSERT_EQUAL(64, f.audioProperties()->bitrate());
@@ -86,6 +86,7 @@ public:
   {
     MPEG::File f(TEST_FILE_PATH_C("lame_vbr.mp3"));
     CPPUNIT_ASSERT(f.audioProperties());
+    CPPUNIT_ASSERT_EQUAL(1887, f.audioProperties()->length());
     CPPUNIT_ASSERT_EQUAL(1887, f.audioProperties()->lengthInSeconds());
     CPPUNIT_ASSERT_EQUAL(1887164, f.audioProperties()->lengthInMilliseconds());
     CPPUNIT_ASSERT_EQUAL(70, f.audioProperties()->bitrate());
@@ -98,6 +99,7 @@ public:
   {
     MPEG::File f(TEST_FILE_PATH_C("rare_frames.mp3"));
     CPPUNIT_ASSERT(f.audioProperties());
+    CPPUNIT_ASSERT_EQUAL(222, f.audioProperties()->length());
     CPPUNIT_ASSERT_EQUAL(222, f.audioProperties()->lengthInSeconds());
     CPPUNIT_ASSERT_EQUAL(222198, f.audioProperties()->lengthInMilliseconds());
     CPPUNIT_ASSERT_EQUAL(233, f.audioProperties()->bitrate());
@@ -110,6 +112,7 @@ public:
   {
     MPEG::File f(TEST_FILE_PATH_C("bladeenc.mp3"));
     CPPUNIT_ASSERT(f.audioProperties());
+    CPPUNIT_ASSERT_EQUAL(3, f.audioProperties()->length());
     CPPUNIT_ASSERT_EQUAL(3, f.audioProperties()->lengthInSeconds());
     CPPUNIT_ASSERT_EQUAL(3553, f.audioProperties()->lengthInMilliseconds());
     CPPUNIT_ASSERT_EQUAL(64, f.audioProperties()->bitrate());
@@ -128,6 +131,7 @@ public:
   {
     MPEG::File f(TEST_FILE_PATH_C("invalid-frames1.mp3"));
     CPPUNIT_ASSERT(f.audioProperties());
+    CPPUNIT_ASSERT_EQUAL(0, f.audioProperties()->length());
     CPPUNIT_ASSERT_EQUAL(0, f.audioProperties()->lengthInSeconds());
     CPPUNIT_ASSERT_EQUAL(392, f.audioProperties()->lengthInMilliseconds());
     CPPUNIT_ASSERT_EQUAL(160, f.audioProperties()->bitrate());
@@ -140,6 +144,7 @@ public:
   {
     MPEG::File f(TEST_FILE_PATH_C("invalid-frames2.mp3"));
     CPPUNIT_ASSERT(f.audioProperties());
+    CPPUNIT_ASSERT_EQUAL(0, f.audioProperties()->length());
     CPPUNIT_ASSERT_EQUAL(0, f.audioProperties()->lengthInSeconds());
     CPPUNIT_ASSERT_EQUAL(314, f.audioProperties()->lengthInMilliseconds());
     CPPUNIT_ASSERT_EQUAL(192, f.audioProperties()->bitrate());
@@ -152,6 +157,7 @@ public:
   {
     MPEG::File f(TEST_FILE_PATH_C("invalid-frames3.mp3"));
     CPPUNIT_ASSERT(f.audioProperties());
+    CPPUNIT_ASSERT_EQUAL(0, f.audioProperties()->length());
     CPPUNIT_ASSERT_EQUAL(0, f.audioProperties()->lengthInSeconds());
     CPPUNIT_ASSERT_EQUAL(183, f.audioProperties()->lengthInMilliseconds());
     CPPUNIT_ASSERT_EQUAL(320, f.audioProperties()->bitrate());
@@ -164,6 +170,7 @@ public:
   {
     MPEG::File f(TEST_FILE_PATH_C("mpeg2.mp3"));
     CPPUNIT_ASSERT(f.audioProperties());
+    CPPUNIT_ASSERT_EQUAL(5387, f.audioProperties()->length());
     CPPUNIT_ASSERT_EQUAL(5387, f.audioProperties()->lengthInSeconds());
     CPPUNIT_ASSERT_EQUAL(5387285, f.audioProperties()->lengthInMilliseconds());
   }
@@ -180,7 +187,7 @@ public:
 
       f.tag()->setTitle(xxx);
       f.tag()->setArtist("Artist A");
-      f.save(MPEG::File::AllTags, File::StripOthers, ID3v2::v4);
+      f.save(MPEG::File::AllTags, true, 4);
       CPPUNIT_ASSERT_EQUAL(true, f.hasID3v2Tag());
     }
     {
@@ -223,7 +230,7 @@ public:
 
       f.tag()->setTitle(xxx);
       f.tag()->setArtist("Artist A");
-      f.save(MPEG::File::AllTags, File::StripOthers, ID3v2::v3);
+      f.save(MPEG::File::AllTags, true, 3);
       CPPUNIT_ASSERT_EQUAL(true, f.hasID3v2Tag());
     }
     {
@@ -296,109 +303,6 @@ public:
     }
   }
 
-  void testProperties()
-  {
-    PropertyMap tags;
-    tags["ALBUM"] = StringList("Album");
-    tags["ALBUMARTIST"] = StringList("Album Artist");
-    tags["ALBUMARTISTSORT"] = StringList("Album Artist Sort");
-    tags["ALBUMSORT"] = StringList("Album Sort");
-    tags["ARRANGER"] = StringList("Arranger");
-    tags["ARTIST"] = StringList("Artist");
-    tags["ARTISTSORT"] = StringList("Artist Sort");
-    tags["ARTISTWEBPAGE"] = StringList("Artist Web Page");
-    tags["ASIN"] = StringList("ASIN");
-    tags["AUDIOSOURCEWEBPAGE"] = StringList("Audio Source Web Page");
-    tags["BARCODE"] = StringList("Barcode");
-    tags["BPM"] = StringList("123");
-    tags["CATALOGNUMBER"] = StringList("Catalog Number");
-    tags["COMMENT"] = StringList("Comment");
-    tags["COMMENT:CDESC"] = StringList("Comment with Description");
-    tags["COMPOSER"] = StringList("Composer");
-    tags["COMPOSERSORT"] = StringList("Composer Sort");
-    tags["CONDUCTOR"] = StringList("Conductor");
-    tags["CONTENTGROUP"] = StringList("Content Group");
-    tags["COPYRIGHT"] = StringList("2021 Copyright");
-    tags["COPYRIGHTURL"] = StringList("Copyright URL");
-    tags["DATE"] = StringList("2021-01-03 12:29:23");
-    tags["DISCNUMBER"] = StringList("3/5");
-    tags["DJMIXER"] = StringList("DJ Mixer");
-    tags["ENCODEDBY"] = StringList("Encoded by");
-    tags["ENCODING"] = StringList("Encoding");
-    tags["ENCODINGTIME"] = StringList("2021-01-03 13:48:44");
-    tags["ENGINEER"] = StringList("Engineer");
-    tags["FILETYPE"] = StringList("File Type");
-    tags["FILEWEBPAGE"] = StringList("File Web Page");
-    tags["GENRE"] = StringList("Genre");
-    tags["GROUPING"] = StringList("Grouping");
-    tags["INITIALKEY"] = StringList("Dbm");
-    tags["ISRC"] = StringList("UKAAA0500001");
-    tags["LABEL"] = StringList("Label");
-    tags["LANGUAGE"] = StringList("eng");
-    tags["LENGTH"] = StringList("1234");
-    tags["LYRICIST"] = StringList("Lyricist");
-    tags["LYRICS:LDESC"] = StringList("Lyrics");
-    tags["MEDIA"] = StringList("Media");
-    tags["MIXER"] = StringList("Mixer");
-    tags["MOOD"] = StringList("Mood");
-    tags["MOVEMENTNAME"] = StringList("Movement Name");
-    tags["MOVEMENTNUMBER"] = StringList("2");
-    tags["MUSICBRAINZ_ALBUMID"] = StringList("MusicBrainz_AlbumID");
-    tags["MUSICBRAINZ_ALBUMARTISTID"] = StringList("MusicBrainz_AlbumartistID");
-    tags["MUSICBRAINZ_ARTISTID"] = StringList("MusicBrainz_ArtistID");
-    tags["MUSICBRAINZ_RELEASEGROUPID"] = StringList("MusicBrainz_ReleasegroupID");
-    tags["MUSICBRAINZ_RELEASETRACKID"] = StringList("MusicBrainz_ReleasetrackID");
-    tags["MUSICBRAINZ_TRACKID"] = StringList("MusicBrainz_TrackID");
-    tags["MUSICBRAINZ_WORKID"] = StringList("MusicBrainz_WorkID");
-    tags["ORIGINALALBUM"] = StringList("Original Album");
-    tags["ORIGINALARTIST"] = StringList("Original Artist");
-    tags["ORIGINALDATE"] = StringList("2021-01-03 13:52:19");
-    tags["ORIGINALFILENAME"] = StringList("Original Filename");
-    tags["ORIGINALLYRICIST"] = StringList("Original Lyricist");
-    tags["OWNER"] = StringList("Owner");
-    tags["PAYMENTWEBPAGE"] = StringList("Payment Web Page");
-    tags["PERFORMER:DRUMS"] = StringList("Drummer");
-    tags["PERFORMER:GUITAR"] = StringList("Guitarist");
-    tags["PLAYLISTDELAY"] = StringList("10");
-    tags["PODCAST"] = StringList();
-    tags["PODCASTCATEGORY"] = StringList("Podcast Category");
-    tags["PODCASTDESC"] = StringList("Podcast Description");
-    tags["PODCASTID"] = StringList("Podcast ID");
-    tags["PODCASTURL"] = StringList("Podcast URL");
-    tags["PRODUCEDNOTICE"] = StringList("2021 Produced Notice");
-    tags["PRODUCER"] = StringList("Producer");
-    tags["PUBLISHERWEBPAGE"] = StringList("Publisher Web Page");
-    tags["RADIOSTATION"] = StringList("Radio Station");
-    tags["RADIOSTATIONOWNER"] = StringList("Radio Station Owner");
-    tags["RELEASECOUNTRY"] = StringList("Release Country");
-    tags["RELEASESTATUS"] = StringList("Release Status");
-    tags["RELEASETYPE"] = StringList("Release Type");
-    tags["REMIXER"] = StringList("Remixer");
-    tags["SCRIPT"] = StringList("Script");
-    tags["SUBTITLE"] = StringList("Subtitle");
-    tags["TITLE"] = StringList("Title");
-    tags["TITLESORT"] = StringList("Title Sort");
-    tags["TRACKNUMBER"] = StringList("2/4");
-    tags["URL:UDESC"] = StringList("URL");
-
-    ScopedFileCopy copy("xing", ".mp3");
-    {
-      MPEG::File f(copy.fileName().c_str());
-      PropertyMap properties = f.properties();
-      CPPUNIT_ASSERT(properties.isEmpty());
-      f.setProperties(tags);
-      f.save();
-    }
-    {
-      const MPEG::File f(copy.fileName().c_str());
-      PropertyMap properties = f.properties();
-      if (tags != properties) {
-        CPPUNIT_ASSERT_EQUAL(tags.toString(), properties.toString());
-      }
-      CPPUNIT_ASSERT(tags == properties);
-    }
-  }
-
   void testRepeatedSave1()
   {
     ScopedFileCopy copy("xing", ".mp3");
@@ -465,7 +369,7 @@ public:
     {
       MPEG::File f(copy.fileName().c_str());
       f.ID3v2Tag(true)->setTitle("");
-      f.save(MPEG::File::ID3v2, File::StripNone);
+      f.save(MPEG::File::ID3v2, false);
     }
     {
       MPEG::File f(copy.fileName().c_str());
@@ -485,7 +389,7 @@ public:
     {
       MPEG::File f(copy.fileName().c_str());
       f.ID3v1Tag(true)->setTitle("");
-      f.save(MPEG::File::ID3v1, File::StripNone);
+      f.save(MPEG::File::ID3v1, false);
     }
     {
       MPEG::File f(copy.fileName().c_str());
@@ -505,7 +409,7 @@ public:
     {
       MPEG::File f(copy.fileName().c_str());
       f.APETag(true)->setTitle("");
-      f.save(MPEG::File::APE, File::StripNone);
+      f.save(MPEG::File::APE, false);
     }
     {
       MPEG::File f(copy.fileName().c_str());

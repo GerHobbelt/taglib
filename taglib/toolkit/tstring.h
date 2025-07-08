@@ -99,19 +99,24 @@ namespace TagLib {
        * IS08859-1, or <i>Latin1</i> encoding.  8 bit characters.
        */
       Latin1 = 0,
+
       /*!
        * UTF16 with a <i>byte order mark</i>.  16 bit characters.
        */
       UTF16 = 1,
+
       /*!
        * UTF16 <i>big endian</i>.  16 bit characters.  This is the encoding used
        * internally by TagLib.
        */
       UTF16BE = 2,
+
       /*!
        * UTF8 encoding.  Characters are usually 8 bits but can be up to 32.
        */
+
       UTF8 = 3,
+
       /*!
        * UTF16 <i>little endian</i>.  16 bit characters.
        */
@@ -340,7 +345,7 @@ namespace TagLib {
      * \deprecated
      */
      // BIC: remove
-    TAGLIB_DEPRECATED bool isNull() const;
+    bool isNull() const;
 
     /*!
      * Returns a ByteVector containing the string's data.  If \a t is Latin1 or
@@ -534,7 +539,7 @@ namespace TagLib {
      * \deprecated
      */
      // BIC: remove
-    TAGLIB_DEPRECATED static String null;
+    static String null;
 
   protected:
     /*!
@@ -550,7 +555,7 @@ namespace TagLib {
      * may lead to a linkage error.
      */
      // BIC: remove
-    TAGLIB_DEPRECATED static const Type WCharByteOrder;
+    static const Type WCharByteOrder;
 
     class StringPrivate;
     StringPrivate *d;

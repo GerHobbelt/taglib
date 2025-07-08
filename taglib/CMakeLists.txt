@@ -28,7 +28,7 @@ include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}/dsf
   ${CMAKE_CURRENT_SOURCE_DIR}/dsdiff
 #JBH ==========================================================================>
-  ${taglib_SOURCE_DIR}/3rdparty
+  ${CMAKE_SOURCE_DIR}/3rdparty
 )
 
 if(ZLIB_FOUND)
@@ -67,7 +67,6 @@ set(tag_HDRS
   mpeg/xingheader.h
   mpeg/id3v1/id3v1tag.h
   mpeg/id3v1/id3v1genres.h
-  mpeg/id3v2/id3v2.h
   mpeg/id3v2/id3v2extendedheader.h
   mpeg/id3v2/id3v2frame.h
   mpeg/id3v2/id3v2header.h
@@ -499,14 +498,13 @@ set(tag_LIB_SRCS
   tagutils.cpp
 )
 
-add_library(tag ${tag_LIB_SRCS} ${tag_HDRS})
-set_property(TARGET tag PROPERTY CXX_STANDARD 98)
-
 #JBH ==========================================================================<
 if(${JBH_USE_EMBEDDED_UNICODE_ENCODER})
   set(tag_HDRS ${tag_HDRS} ${jbhCHARSETDETECTOR_HDRS} ${jbhCHARSETCONVERTER_HDRS})
 endif()
 #JBH ==========================================================================>
+
+add_library(tag ${tag_LIB_SRCS} ${tag_HDRS})
 
 #JBH ==========================================================================<
 #JBH COMMENTED OUT    if(NOT WIN32)
@@ -541,10 +539,6 @@ set_target_properties(tag PROPERTIES
   LINK_INTERFACE_LIBRARIES ""
   PUBLIC_HEADER "${tag_HDRS}"
 )
-if(VISIBILITY_HIDDEN)
-  set_target_properties(tag PROPERTIES C_VISIBILITY_PRESET hidden)
-endif()
-
 if(BUILD_FRAMEWORK)
   unset(INSTALL_NAME_DIR)
   set_target_properties(tag PROPERTIES 

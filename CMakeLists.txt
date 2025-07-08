@@ -3,7 +3,7 @@
 # For General: cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON -DCMAKE_PREFIX_PATH=$HOME/00GeneralLibs -DCMAKE_INSTALL_PREFIX=$HOME/00GeneralLibs -DJBH_BUILD_FOR_GENERAL=ON  -DJBH_USE_EMBEDDED_UNICODE_ENCODER=ON -DWITH_ASF=ON -DWITH_MP4=ON -DBUILD_EXAMPLES=ON
 #
 
-cmake_minimum_required(VERSION 3.0.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.8.0 FATAL_ERROR)
 
 project(taglib)
 
@@ -43,6 +43,10 @@ if(ENABLE_CCACHE)
 endif()
 
 option(VISIBILITY_HIDDEN "Build with -fvisibility=hidden" OFF)
+if(VISIBILITY_HIDDEN)
+  add_definitions(-fvisibility=hidden)
+endif()
+
 option(BUILD_TESTS "Build the test suite" OFF)
 option(BUILD_EXAMPLES "Build the examples" OFF)
 option(BUILD_BINDINGS "Build the bindings" ON)
@@ -120,9 +124,9 @@ endif()
 # 2. If any interfaces have been added, removed, or changed since the last update, increment current, and set revision to 0.
 # 3. If any interfaces have been added since the last public release, then increment age.
 # 4. If any interfaces have been removed since the last public release, then set age to 0.
-set(TAGLIB_SOVERSION_CURRENT  19)
+set(TAGLIB_SOVERSION_CURRENT  18)
 set(TAGLIB_SOVERSION_REVISION 0)
-set(TAGLIB_SOVERSION_AGE      18)
+set(TAGLIB_SOVERSION_AGE      17)
 
 math(EXPR TAGLIB_SOVERSION_MAJOR "${TAGLIB_SOVERSION_CURRENT} - ${TAGLIB_SOVERSION_AGE}")
 math(EXPR TAGLIB_SOVERSION_MINOR "${TAGLIB_SOVERSION_AGE}")
@@ -130,12 +134,8 @@ math(EXPR TAGLIB_SOVERSION_PATCH "${TAGLIB_SOVERSION_REVISION}")
 
 include(ConfigureChecks.cmake)
 
-if(${ZLIB_FOUND})
-  set(ZLIB_LIBRARIES_FLAGS -lz)
-endif()
-
 if(NOT WIN32)
-  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/taglib-config.cmake" "${CMAKE_CURRENT_BINARY_DIR}/taglib-config" @ONLY)
+  configure_file("${CMAKE_CURRENT_SOURCE_DIR}/taglib-config.cmake" "${CMAKE_CURRENT_BINARY_DIR}/taglib-config")
   install(PROGRAMS "${CMAKE_CURRENT_BINARY_DIR}/taglib-config" DESTINATION "${BIN_INSTALL_DIR}")
 endif()
 

@@ -88,10 +88,7 @@ TextIdentificationFrame *TextIdentificationFrame::createTIPLFrame(const Property
   TextIdentificationFrame *frame = new TextIdentificationFrame("TIPL");
   StringList l;
   for(PropertyMap::ConstIterator it = properties.begin(); it != properties.end(); ++it){
-    const String role = involvedPeopleMap()[it->first];
-    if(role.isEmpty()) // should not happen
-      continue;
-    l.append(role);
+    l.append(it->first);
     l.append(it->second.toString(",")); // comma-separated list of names
   }
   frame->setText(l);
@@ -144,8 +141,7 @@ String::Type TextIdentificationFrame::textEncoding() const
 
 void TextIdentificationFrame::setTextEncoding(String::Type encoding)
 {
-  //JBH: possible enum values: {Latin1, UTF16, UTF16BE, UTF8, UTF16LE}
-  d->textEncoding = encoding;
+  d->textEncoding = encoding; //JBH: possible enum values: {Latin1, UTF16, UTF16BE, UTF8, UTF16LE}
 }
 
 namespace
@@ -289,8 +285,7 @@ void TextIdentificationFrame::parseFields(const ByteVector &data)
 
   // read the string data type (the first byte of the field data)
 
-  //JBH: The first byte of a field is always the encoding type in id3v2 by the spec?
-  d->textEncoding = String::Type(data[0]);
+  d->textEncoding = String::Type(data[0]); //JBH: The first byte of a field is always the encoding type in id3v2 by the spec?
 
   // split the byte array into chunks based on the string type (two byte delimiter
   // for unicode encodings)
@@ -360,7 +355,9 @@ void TextIdentificationFrame::parseFields(const ByteVector &data)
 //JBH >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>        
       }
       else
+      {
         d->fieldList.append(String(*it, d->textEncoding));
+      }
     }
   }
 }
@@ -428,7 +425,7 @@ PropertyMap TextIdentificationFrame::makeTIPLProperties() const
         break;
       }
     if(!found){
-      // invalid involved role -> mark whole frame as unsupported in order to be consistent with writing
+      // invalid involved role -> mark whole frame as unsupported in order to be consisten with writing
       map.clear();
       map.unsupportedData().append(frameID());
       return map;
@@ -490,13 +487,7 @@ UserTextIdentificationFrame::UserTextIdentificationFrame(const String &descripti
 
 String UserTextIdentificationFrame::toString() const
 {
-  // first entry is the description itself, drop from values list
-  StringList l = fieldList();
-  for(StringList::Iterator it = l.begin(); it != l.end(); ++it) {
-    l.erase(it);
-    break;
-  }
-  return "[" + description() + "] " + l.toString();
+  return "[" + description() + "] " + fieldList().toString();
 }
 
 String UserTextIdentificationFrame::description() const

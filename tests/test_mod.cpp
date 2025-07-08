@@ -95,9 +95,6 @@ public:
     CPPUNIT_ASSERT(unsupported.contains("ARTIST"));
     CPPUNIT_ASSERT_EQUAL(properties["ARTIST"], unsupported["ARTIST"]);
     CPPUNIT_ASSERT(!unsupported.contains("TITLE"));
-
-    properties = t.properties();
-    CPPUNIT_ASSERT_EQUAL(StringList("title"), properties["TITLE"]);
   }
 
 private:

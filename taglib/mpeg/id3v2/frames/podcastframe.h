@@ -57,8 +57,6 @@ namespace TagLib {
        */
       virtual String toString() const;
 
-      PropertyMap asProperties() const;
-
     protected:
       // Reimplementations.
 

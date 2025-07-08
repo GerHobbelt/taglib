@@ -136,8 +136,7 @@ String::Type UnsynchronizedLyricsFrame::textEncoding() const
 
 void UnsynchronizedLyricsFrame::setTextEncoding(String::Type encoding)
 {
-  //JBH: possible enum values: {Latin1, UTF16, UTF16BE, UTF8, UTF16LE}
-  d->textEncoding = encoding;
+  d->textEncoding = encoding; //JBH: possible enum values: {Latin1, UTF16, UTF16BE, UTF8, UTF16LE}
 }
 
 PropertyMap UnsynchronizedLyricsFrame::asProperties() const
@@ -230,12 +229,10 @@ void UnsynchronizedLyricsFrame::parseFields(const ByteVector &data)
   }
 
   //JBH: The first byte of a field is always the encoding type in id3v2 by the spec?
-  //JBH: TagLib::String::Latin1(0), TagLib::String::UTF8(0), TagLib::String::UTF16(1)
-  d->textEncoding = String::Type(data[0]);
+  d->textEncoding = String::Type(data[0]); //JBH: TagLib::String::Latin1(0), TagLib::String::UTF8(0), TagLib::String::UTF16(1)
   //JBH: data[i] --> value @ "data->offset + i"
 
-  //JBH: language --> "kor"
-  d->language = data.mid(1, 3);
+  d->language = data.mid(1, 3); //JBH: language --> "kor"
 
   int byteAlign
     = d->textEncoding == String::Latin1 || d->textEncoding == String::UTF8 ? 1 : 2;
@@ -245,7 +242,8 @@ void UnsynchronizedLyricsFrame::parseFields(const ByteVector &data)
     ByteVectorList::split(data.mid(4), textDelimiter(d->textEncoding), byteAlign, 2);
 
 
-  if(l.size() == 2) {
+  if(l.size() == 2)
+  {
     if(d->textEncoding == String::Latin1) {
 //JBH <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
 #ifdef JBH_USE_EMBEDDED_UNICODE_ENCODER

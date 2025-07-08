@@ -37,7 +37,6 @@
 # include <windows.h>
 #endif
 
-//JBH ==========================================================================>
 //#define USE_APP_LOGGER //JBH: define it as a cmake option, such as [cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$INSTALL_DIRECTORY -DUSE_APP_LOGGER=ON -DUSE_QXTLOGGER=ON -DUSE_JBHLOGGER=OFF -DWITH_ASF=ON -DWITH_MP4=ON -DBUILD_EXAMPLES=OFF]
 #ifdef USE_APP_LOGGER
   #ifdef USE_QXTLOGGER
@@ -46,7 +45,7 @@
     #include "jbh/Logger.h"
   #endif
 #endif
-//JBH ==========================================================================>
+
 using namespace TagLib;
 
 namespace
@@ -73,7 +72,6 @@ namespace
         std::cerr << std::string(&buf[0]) << std::endl;
       }
     #else
-
       std::cerr << msg.toCString(true /*encode to UTF-8*/) << std::endl;
     #endif 
 #endif

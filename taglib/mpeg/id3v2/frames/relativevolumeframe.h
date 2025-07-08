@@ -131,12 +131,12 @@ namespace TagLib {
       /*!
        * \deprecated Always returns master volume.
        */
-      TAGLIB_DEPRECATED ChannelType channelType() const;
+      ChannelType channelType() const;
 
       /*!
        * \deprecated This method no longer has any effect.
        */
-      TAGLIB_DEPRECATED void setChannelType(ChannelType t);
+      void setChannelType(ChannelType t);
 
       /*
        * There was a terrible API goof here, and while this can't be changed to
@@ -155,7 +155,7 @@ namespace TagLib {
        * available and returns 0 if the specified channel does not exist.
        *
        * \see setVolumeAdjustmentIndex()
-       * \see volumeAdjustment()
+       * \see volumeAjustment()
        */
       short volumeAdjustmentIndex(ChannelType type = MasterVolume) const;
 
@@ -167,7 +167,7 @@ namespace TagLib {
        * By default this sets the value for the master volume.
        *
        * \see volumeAdjustmentIndex()
-       * \see setVolumeAdjustment()
+       * \see setVolumeAjustment()
        */
       void setVolumeAdjustmentIndex(short index, ChannelType type = MasterVolume);
 
