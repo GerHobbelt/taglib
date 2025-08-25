@@ -58,6 +58,8 @@
 
 #define TStringToQString(s) QString::fromUtf8((s).toCString(true))
 
+#define CStringToTString(s) TagLib::String((s), TagLib::String::UTF8)
+
 namespace TagLib {
 
   class StringList;

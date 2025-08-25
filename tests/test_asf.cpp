@@ -103,8 +103,8 @@ public:
     {
       ASF::File f(newname.c_str());
       ASF::AttributeList values;
-      values.append("Foo");
-      values.append("Bar");
+      values.append(CStringToTString("Foo"));
+      values.append(CStringToTString("Bar"));
       f.tag()->setAttribute("WM/AlbumTitle", values);
       f.save();
     }
@@ -151,7 +151,7 @@ public:
 
     {
       ASF::File f(newname.c_str());
-      ASF::Attribute attr("Foo");
+      ASF::Attribute attr(CStringToTString("Foo"));
       attr.setStream(43);
       f.tag()->setAttribute("WM/AlbumTitle", attr);
       f.save();
@@ -170,7 +170,7 @@ public:
 
     {
       ASF::File f(newname.c_str());
-      ASF::Attribute attr("Foo");
+      ASF::Attribute attr(CStringToTString("Foo"));
       attr.setStream(32);
       attr.setLanguage(56);
       f.tag()->setAttribute("WM/AlbumTitle", attr);

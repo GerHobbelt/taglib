@@ -252,7 +252,7 @@ public:
     CPPUNIT_ASSERT(!t1.isEmpty());
 
     MP4::Tag t2;
-    t2.setItem("foo", "bar");
+    t2.setItem(CStringToTString("foo"), "bar");
     CPPUNIT_ASSERT(!t2.isEmpty());
   }
 
