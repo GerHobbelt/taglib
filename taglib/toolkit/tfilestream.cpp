@@ -64,10 +64,11 @@ namespace
        pathWStr.compare(0, LongLocalPathPrefix.size() - 1, LongLocalPathPrefix) != 0 &&
        pathWStr.compare(0, LongUNCPathPrefix.size() - 1, LongUNCPathPrefix) != 0) {
       if(pathWStr.compare(0, UNCPathPrefix.size() - 1, UNCPathPrefix) == 0) {
-        pathWStr = LongUNCPathPrefix + pathWStr.substr(2);
+        // fix error C2678 : binary '+' : no operator found which takes a left - hand operand of type 'const std::wstring_view' (or there is no acceptable conversion)
+        pathWStr = std::wstring(LongUNCPathPrefix) + pathWStr.substr(2);
       }
       else {
-        pathWStr = LongLocalPathPrefix + pathWStr;
+        pathWStr = std::wstring(LongLocalPathPrefix) + pathWStr;
       }
     }
     return CreateFileW(pathWStr.c_str(), access, FILE_SHARE_READ, nullptr, OPEN_EXISTING, 0, nullptr);

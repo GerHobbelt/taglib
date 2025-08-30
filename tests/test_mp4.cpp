@@ -252,6 +252,7 @@ public:
     CPPUNIT_ASSERT(!t1.isEmpty());
 
     MP4::Tag t2;
+    // fix warning C4800 : Implicit conversion from 'const char *' to bool. Possible information loss.
     t2.setItem(CStringToTString("foo"), "bar");
     CPPUNIT_ASSERT(!t2.isEmpty());
   }
