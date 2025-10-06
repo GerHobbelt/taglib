@@ -1,0 +1,113 @@
+name: PR Change Summary (OpenAI)
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  summarize-changes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.head_ref }}  # ✅ PR의 실제 브랜치 체크아웃
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install openai
+
+      - name: Prepare environment
+        run: |
+          echo "DATE=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
+          echo "SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          TITLE=$(echo "${{ github.event.pull_request.title }}" | tr ' ' '-' | tr -cd '[:alnum:]-')
+          echo "TITLE=$TITLE" >> $GITHUB_ENV
+          echo "BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
+          echo "✅ Env set: $TITLE / $BRANCH"
+
+      - name: Extract diff
+        run: |
+          git fetch origin main
+          git diff origin/main...HEAD > diff.patch
+
+      - name: Summarize with OpenAI (KR + EN)
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          python - <<'PYCODE'
+          import os, openai, pathlib
+
+          openai.api_key = os.environ["OPENAI_API_KEY"]
+
+          diff = open("diff.patch").read()
+          if not diff.strip():
+              print("⚠️ No diff to summarize.")
+              exit(0)
+
+          date = os.getenv("DATE")
+          sha = os.getenv("SHA")
+          title = os.getenv("TITLE")
+          filename = f"changes/{date}-{sha}-{title}.md"
+
+          prompt = f"""
+          You are a senior software engineer reviewing a Git diff.
+          Produce TWO summaries (Korean + English):
+          1️⃣ 🧠 변경 요약 (Korean)
+            - 개요, 변경 파일, 주요 변경 내용, 영향 및 리스크
+          2️⃣ 💬 Change Summary (English)
+            - Overview, Changed Files, Key Changes, Impact/Risks
+          Keep clear, concise, and professional.
+          Diff:
+          {diff[:15000]}
+          """
+
+          resp = openai.chat.completions.create(
+              model="gpt-4o-mini",
+              messages=[{"role": "user", "content": prompt}]
+          )
+          summary = resp.choices[0].message.content.strip()
+
+          pathlib.Path("changes").mkdir(exist_ok=True)
+          with open(filename, "w") as f:
+              f.write(summary)
+
+          # --- update index.md ---
+          index_path = pathlib.Path("changes/index.md")
+          link_line = f"- [{date} {title}](./{date}-{sha}-{title}.md)"
+
+          if index_path.exists():
+              lines = index_path.read_text().splitlines()
+          else:
+              lines = ["# Change Index", ""]
+
+          if link_line not in lines:
+              lines.append(link_line)
+
+          header, items = lines[0], [l for l in lines[1:] if l.strip()]
+          items_sorted = sorted(items, key=lambda x: x.split()[1] if len(x.split()) > 1 else "", reverse=True)
+
+          index_path.write_text("\n".join([header, ""] + items_sorted) + "\n")
+          print(f"✅ Created: {filename}")
+          print(f"✅ Updated: {index_path}")
+          PYCODE
+
+      - name: Commit and push summary + index
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add changes/
+          git commit -m "chore: add bilingual AI summary and update index [skip ci]" || echo "no diff"
+          git push origin HEAD:${{ env.BRANCH }} || echo "⚠️ Push skipped (detached state or no diff)"
+
+      - name: Comment index.md to PR
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: "🧾 Change Index"
+          path: changes/index.md
