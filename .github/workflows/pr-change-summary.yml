@@ -7,13 +7,17 @@ on:
 jobs:
   summarize-changes:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # push 권한 명시
+      pull-requests: write  # PR 코멘트 권한
 
     steps:
-      - name: Checkout PR branch
+      - name: Checkout source
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.head_ref }}  # ⭐ 핵심 수정
           fetch-depth: 0
-          ref: ${{ github.head_ref }}  # ✅ PR의 실제 브랜치 체크아웃
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -23,23 +27,28 @@ jobs:
       - name: Install dependencies
         run: pip install openai
 
-      - name: Prepare environment
+      - name: Get commit info
+        id: info
         run: |
-          echo "DATE=$(date +'%Y.%m.%d')" >> $GITHUB_ENV
-          echo "SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-          TITLE=$(echo "${{ github.event.pull_request.title }}" | tr ' ' '-' | tr -cd '[:alnum:]-')
-          echo "TITLE=$TITLE" >> $GITHUB_ENV
-          echo "BRANCH=${{ github.head_ref }}" >> $GITHUB_ENV
-          echo "✅ Env set: $TITLE / $BRANCH"
+          echo "date=$(date +'%Y.%m.%d')" >> $GITHUB_OUTPUT
+          echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          title=$(echo "${{ github.event.pull_request.title }}" | tr ' ' '-' | tr -cd '[:alnum:]-')
+          echo "title=${title}" >> $GITHUB_OUTPUT
 
       - name: Extract diff
+        env:
+          BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
         run: |
-          git fetch origin main
-          git diff origin/main...HEAD > diff.patch
+          echo "📌 Base branch: $BASE_BRANCH"
+          git fetch origin $BASE_BRANCH
+          git diff origin/$BASE_BRANCH...HEAD > diff.patch
 
       - name: Summarize with OpenAI (KR + EN)
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          date: ${{ steps.info.outputs.date }}
+          sha: ${{ steps.info.outputs.sha }}
+          title: ${{ steps.info.outputs.title }}
         run: |
           python - <<'PYCODE'
           import os, openai, pathlib
@@ -51,19 +60,16 @@ jobs:
               print("⚠️ No diff to summarize.")
               exit(0)
 
-          date = os.getenv("DATE")
-          sha = os.getenv("SHA")
-          title = os.getenv("TITLE")
-          filename = f"changes/{date}-{sha}-{title}.md"
-
           prompt = f"""
           You are a senior software engineer reviewing a Git diff.
-          Produce TWO summaries (Korean + English):
-          1️⃣ 🧠 변경 요약 (Korean)
-            - 개요, 변경 파일, 주요 변경 내용, 영향 및 리스크
-          2️⃣ 💬 Change Summary (English)
-            - Overview, Changed Files, Key Changes, Impact/Risks
-          Keep clear, concise, and professional.
+          Analyze the following diff and produce TWO sections:
+          1. Korean summary titled "🧠 변경 요약 (Korean)"  
+             - Summarize in fluent professional Korean.  
+             - Include sections: 개요, 변경 파일, 주요 변경 내용, 영향 및 리스크.
+          2. English summary titled "💬 Change Summary (English)"  
+             - Include sections: Overview, Changed Files, Key Changes, Impact/Risks.
+          Keep both versions clear, concise, and structured in Markdown format.
+
           Diff:
           {diff[:15000]}
           """
@@ -72,7 +78,13 @@ jobs:
               model="gpt-4o-mini",
               messages=[{"role": "user", "content": prompt}]
           )
+
           summary = resp.choices[0].message.content.strip()
+
+          date = os.getenv("date")
+          sha = os.getenv("sha")
+          title = os.getenv("title")
+          filename = f"changes/{date}-{sha}-{title}.md"
 
           pathlib.Path("changes").mkdir(exist_ok=True)
           with open(filename, "w") as f:
@@ -94,17 +106,21 @@ jobs:
           items_sorted = sorted(items, key=lambda x: x.split()[1] if len(x.split()) > 1 else "", reverse=True)
 
           index_path.write_text("\n".join([header, ""] + items_sorted) + "\n")
-          print(f"✅ Created: {filename}")
-          print(f"✅ Updated: {index_path}")
+          print(f"✅ Summary created: {filename}")
+          print(f"✅ Index updated: {index_path}")
           PYCODE
 
       - name: Commit and push summary + index
         run: |
-          git config user.name "github-actions"
-          git config user.email "actions@github.com"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add changes/
-          git commit -m "chore: add bilingual AI summary and update index [skip ci]" || echo "no diff"
-          git push origin HEAD:${{ env.BRANCH }} || echo "⚠️ Push skipped (detached state or no diff)"
+          if git diff --staged --quiet; then
+            echo "📭 No changes to commit"
+          else
+            git commit -m "chore: add bilingual AI summary and update index [skip ci]"
+            git push
+          fi
 
       - name: Comment index.md to PR
         uses: marocchino/sticky-pull-request-comment@v2
