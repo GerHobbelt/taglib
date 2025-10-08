@@ -1,0 +1,129 @@
+name: PR Change Summary (OpenAI)
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  summarize-changes:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # push 권한 명시
+      pull-requests: write  # PR 코멘트 권한
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}  # ⭐ 핵심 수정
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install openai
+
+      - name: Get commit info
+        id: info
+        run: |
+          echo "date=$(date +'%Y.%m.%d')" >> $GITHUB_OUTPUT
+          echo "sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          title=$(echo "${{ github.event.pull_request.title }}" | tr ' ' '-' | tr -cd '[:alnum:]-')
+          echo "title=${title}" >> $GITHUB_OUTPUT
+
+      - name: Extract diff
+        env:
+          BASE_BRANCH: ${{ github.event.pull_request.base.ref }}
+        run: |
+          echo "📌 Base branch: $BASE_BRANCH"
+          git fetch origin $BASE_BRANCH
+          git diff origin/$BASE_BRANCH...HEAD > diff.patch
+
+      - name: Summarize with OpenAI (KR + EN)
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          date: ${{ steps.info.outputs.date }}
+          sha: ${{ steps.info.outputs.sha }}
+          title: ${{ steps.info.outputs.title }}
+        run: |
+          python - <<'PYCODE'
+          import os, openai, pathlib
+
+          openai.api_key = os.environ["OPENAI_API_KEY"]
+
+          diff = open("diff.patch").read()
+          if not diff.strip():
+              print("⚠️ No diff to summarize.")
+              exit(0)
+
+          prompt = f"""
+          You are a senior software engineer reviewing a Git diff.
+          Analyze the following diff and produce TWO sections:
+          1. Korean summary titled "🧠 변경 요약 (Korean)"  
+             - Summarize in fluent professional Korean.  
+             - Include sections: 개요, 변경 파일, 주요 변경 내용, 영향 및 리스크.
+          2. English summary titled "💬 Change Summary (English)"  
+             - Include sections: Overview, Changed Files, Key Changes, Impact/Risks.
+          Keep both versions clear, concise, and structured in Markdown format.
+
+          Diff:
+          {diff[:15000]}
+          """
+
+          resp = openai.chat.completions.create(
+              model="gpt-4o-mini",
+              messages=[{"role": "user", "content": prompt}]
+          )
+
+          summary = resp.choices[0].message.content.strip()
+
+          date = os.getenv("date")
+          sha = os.getenv("sha")
+          title = os.getenv("title")
+          filename = f"changes/{date}-{sha}-{title}.md"
+
+          pathlib.Path("changes").mkdir(exist_ok=True)
+          with open(filename, "w") as f:
+              f.write(summary)
+
+          # --- update index.md ---
+          index_path = pathlib.Path("changes/index.md")
+          link_line = f"- [{date} {title}](./{date}-{sha}-{title}.md)"
+
+          if index_path.exists():
+              lines = index_path.read_text().splitlines()
+          else:
+              lines = ["# Change Index", ""]
+
+          if link_line not in lines:
+              lines.append(link_line)
+
+          header, items = lines[0], [l for l in lines[1:] if l.strip()]
+          items_sorted = sorted(items, key=lambda x: x.split()[1] if len(x.split()) > 1 else "", reverse=True)
+
+          index_path.write_text("\n".join([header, ""] + items_sorted) + "\n")
+          print(f"✅ Summary created: {filename}")
+          print(f"✅ Index updated: {index_path}")
+          PYCODE
+
+      - name: Commit and push summary + index
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add changes/
+          if git diff --staged --quiet; then
+            echo "📭 No changes to commit"
+          else
+            git commit -m "chore: add bilingual AI summary and update index [skip ci]"
+            git push
+          fi
+
+      - name: Comment index.md to PR
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: "🧾 Change Index"
+          path: changes/index.md
