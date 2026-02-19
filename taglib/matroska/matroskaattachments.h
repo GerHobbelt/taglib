@@ -1,0 +1,79 @@
+/***************************************************************************
+ *   This library is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU Lesser General Public License version   *
+ *   2.1 as published by the Free Software Foundation.                     *
+ *                                                                         *
+ *   This library is distributed in the hope that it will be useful, but   *
+ *   WITHOUT ANY WARRANTY; without even the implied warranty of            *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU     *
+ *   Lesser General Public License for more details.                       *
+ *                                                                         *
+ *   You should have received a copy of the GNU Lesser General Public      *
+ *   License along with this library; if not, write to the Free Software   *
+ *   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA         *
+ *   02110-1301  USA                                                       *
+ *                                                                         *
+ *   Alternatively, this file is available under the Mozilla Public        *
+ *   License Version 1.1.  You may obtain a copy of the License at         *
+ *   http://www.mozilla.org/MPL/                                           *
+ ***************************************************************************/
+
+#ifndef TAGLIB_MATROSKAATTACHMENTS_H
+#define TAGLIB_MATROSKAATTACHMENTS_H
+
+#include <memory>
+#include "taglib_export.h"
+#include "tlist.h"
+#include "matroskaelement.h"
+
+namespace TagLib {
+  class File;
+  namespace EBML {
+    class MkAttachments;
+  }
+  namespace Matroska {
+    class AttachedFile;
+    class File;
+
+    //! Collection of attached files.
+    class TAGLIB_EXPORT Attachments
+#ifndef DO_NOT_DOCUMENT
+      : private Element
+#endif
+    {
+    public:
+      using AttachedFileList = List<AttachedFile>;
+      //! Construct attachments.
+      Attachments();
+
+      //! Destroy attachements.
+      ~Attachments();
+
+      //! Add an attached file.
+      void addAttachedFile(const AttachedFile &file);
+
+      //! Remove an attached file.
+      void removeAttachedFile(unsigned long long uid);
+
+      //! Remove an attached file.
+      void clear();
+
+      //! Get list of all attached files.
+      const AttachedFileList &attachedFileList() const;
+
+    private:
+      friend class EBML::MkAttachments;
+      friend class File;
+      class AttachmentsPrivate;
+
+      // private Element implementation
+      bool render() override;
+      AttachedFileList &attachedFiles();
+
+      TAGLIB_MSVC_SUPPRESS_WARNING_NEEDS_TO_HAVE_DLL_INTERFACE
+      std::unique_ptr<AttachmentsPrivate> d;
+    };
+  }
+}
+
+#endif
